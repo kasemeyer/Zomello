@@ -11,7 +11,7 @@ import { boardAsTemplate } from "./boardTemplates";
 import { broadcastData, isDeviceWindow, isExtraWindow, windowBoardId } from "./windows";
 import { sendDeviceChanges, setDeviceBase } from "./deviceWindow";
 import { isRemote } from "./remote";
-import { isServer, mergeOps, pushChanges, rebaseSnapshot, setBase, type Ops } from "./server";
+import { canEditBoard, isServer, mergeOps, pushChanges, rebaseSnapshot, setBase, type Ops } from "./server";
 import {
   blockLoopReason, byOrder, emptyFilter, fromISO, inverseLink, isBlocked, isLate, nextRecurrenceDate, PALETTE, subtaskLoopReason, toISO, todayISO, uid,
 } from "./utils";
@@ -721,6 +721,25 @@ const settingsChanged = (a: Settings, b: Settings) =>
   (Object.keys(a) as (keyof Settings)[]).some(
     (k) => !(VIEW_PREFS as readonly string[]).includes(k) && JSON.stringify(a[k]) !== JSON.stringify(b[k]),
   );
+/**
+ * Does a change touch a board that's view-only for this account? The server would refuse it anyway
+ * (sync.rs); catching it here keeps the screen honest instead of snapping back after a round trip.
+ */
+function touchesViewOnly(prev: AppData, next: AppData): boolean {
+  if (!isServer || prev === next) return false;
+  const ro = new Set(Object.values(prev.boards).filter((b) => !canEditBoard(b)).map((b) => b.id));
+  if (!ro.size) return false;
+  if (prev.boards !== next.boards) for (const id of ro) if (prev.boards[id] !== next.boards[id]) return true;
+  for (const k of ["lists", "cards"] as const) {
+    if (prev[k] === next[k]) continue;
+    const a = prev[k] as Record<ID, { boardId: ID }>;
+    const b = next[k] as Record<ID, { boardId: ID }>;
+    for (const id in b) if (a[id] !== b[id] && (ro.has(b[id].boardId) || (a[id] && ro.has(a[id].boardId)))) return true;
+    for (const id in a) if (!(id in b) && ro.has(a[id].boardId)) return true;
+  }
+  return false;
+}
+
 const undoable = (a: AppData, b: AppData) =>
   a.boards !== b.boards || a.lists !== b.lists || a.cards !== b.cards ||
   a.savedFilters !== b.savedFilters || a.templates !== b.templates || a.boardTemplates !== b.boardTemplates || settingsChanged(a.settings, b.settings);
@@ -757,6 +776,10 @@ export const useStore = create<State>((set, get) => {
   const mut = (fn: (d: AppData) => AppData) =>
     set((s) => {
       const next = fn(s.data);
+      if (touchesViewOnly(s.data, next)) {
+        setTimeout(() => get().toast("This board is view-only for you", { key: "view-only" }));
+        return {};
+      }
       if (s.loaded && next !== s.data && undoable(next, s.data)) {
         const now = Date.now();
         if (now - lastChange > COALESCE_MS) {

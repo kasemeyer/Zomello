@@ -2,7 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { exportBoard } from "../boardFile";
 import { isMobileApp } from "../storage";
 import { archiveBoard, deleteBoard as deleteBoardAction } from "../actions";
-import { isServer, leaveBoard, ownsBoard } from "../server";
+import { canEditBoard, isServer, leaveBoard, ownsBoard } from "../server";
 import {
   Archive,
   BarChart3,
@@ -29,6 +29,7 @@ import {
   LogOut,
   ArrowRightLeft,
   CircleDot,
+  Eye,
   Flag,
   Sun,
   X, FileDown, ClipboardPaste, Zap, ZapOff, SlidersHorizontal, AlertTriangle, CalendarClock } from "lucide-react";
@@ -158,19 +159,31 @@ function BoardHeader({ board, view }: { board: Board; view: ViewMode }) {
   const features = useStore((s) => s.data.settings.features);
   const ai = featureOn({ features }, "ai");
   const { updateBoard, duplicateBoard, navigate, setBoardUi } = useStore.getState();
+  const canEdit = canEditBoard(board);
   return (
     <header className="board-header">
       {board.icon ? <span className="board-icon">{board.icon}</span> : <span className="board-swatch" style={{ background: board.color }} />}
       <span className="board-title-wrap" title={board.title}>
-        <InlineEdit className="board-title" value={board.title} onSave={(title) => updateBoard(board.id, { title })} />
+        {canEdit ? (
+          <InlineEdit className="board-title" value={board.title} onSave={(title) => updateBoard(board.id, { title })} />
+        ) : (
+          <span className="board-title">{board.title}</span>
+        )}
       </span>
-      <button
-        className={`icon-btn ${board.starred ? "starred" : ""}`}
-        title={board.starred ? "Unstar" : "Star"}
-        onClick={() => updateBoard(board.id, { starred: !board.starred })}
-      >
-        <Star size={17} fill={board.starred ? "currentColor" : "none"} />
-      </button>
+      {!canEdit && (
+        <span className="chip small" title="This board is shared with you to look at. Ask its owner for edit access.">
+          <Eye size={12} /> View only
+        </span>
+      )}
+      {canEdit && (
+        <button
+          className={`icon-btn ${board.starred ? "starred" : ""}`}
+          title={board.starred ? "Unstar" : "Star"}
+          onClick={() => updateBoard(board.id, { starred: !board.starred })}
+        >
+          <Star size={17} fill={board.starred ? "currentColor" : "none"} />
+        </button>
+      )}
       <nav className="view-tabs" aria-label="Board views">
         {VIEWS.map((v, i) => viewShown({ features }, v.id) && (
           <button

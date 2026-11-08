@@ -182,7 +182,7 @@ fn router(app: App) -> Router {
         .route("/api/users", get(sync::directory))
         .route("/api/boards/{id}/sharing", get(sharing::sharing))
         .route("/api/boards/{id}/invite", post(sharing::invite))
-        .route("/api/boards/{id}/members/{user}", delete(sharing::remove_member))
+        .route("/api/boards/{id}/members/{user}", patch(sharing::set_role).delete(sharing::remove_member))
         .route("/api/boards/{id}/leave", post(sharing::leave))
         .route("/api/boards/{id}/transfer", post(sharing::transfer))
         .route("/api/invites", get(sharing::my_invites))

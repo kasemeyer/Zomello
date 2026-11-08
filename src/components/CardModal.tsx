@@ -26,6 +26,7 @@ import {
   Copy,
   ExternalLink,
   Link2,
+  Eye,
   MessageSquare,
   Plus,
   Tag,
@@ -35,6 +36,7 @@ import {
 } from "lucide-react";
 import type { Activity, Attachment, Card, CardSection, FieldDef, ID, LinkType, Priority, Progress, Recurrence, RecurrenceFreq } from "../types";
 import { attachToCard, isLocalPath, storeLinkedFile } from "../attachments";
+import { canEditBoard } from "../server";
 import { useStore } from "../store";
 import {
   blockLoopReason, byOrder, subtaskLoopReason, describeRecurrence, fileSize, formatDuration, isImage, LINK_TYPES, parseDuration,
@@ -106,6 +108,12 @@ function CardDetail({ card, onClose }: { card: Card; onClose: () => void }) {
 
   return (
     <div className="card-detail">
+      {!canEditBoard(board) && (
+        <p className="muted small view-only-note" style={{ margin: "8px 16px 0" }}>
+          <Eye size={12} style={{ verticalAlign: "-2px" }} /> This board is view-only for you — changes won't stick. Ask its owner for edit
+          access.
+        </p>
+      )}
       {coverImg ? (
         <img className="detail-cover image" src={storedSrc(coverImg.url)} alt="" />
       ) : (

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Crown, LogOut, Send, UserMinus, X } from "lucide-react";
+import { Crown, Eye, LogOut, Send, UserMinus, X } from "lucide-react";
 import type { Board } from "../types";
 import { useStore } from "../store";
 import {
-  cancelInvite, directory, invite, leaveBoard, me, removeMember, sharing, transferBoard, type DirectoryUser, type Member,
+  cancelInvite, directory, invite, leaveBoard, me, removeMember, setMemberRole, sharing, transferBoard, type DirectoryUser, type Member,
 } from "../server";
 import { ask, Avatar, Modal } from "./ui";
 
@@ -14,6 +14,7 @@ export function ShareDialog({ board, onClose }: { board: Board; onClose: () => v
   const [info, setInfo] = useState<Sharing | null>(null);
   const [people, setPeople] = useState<DirectoryUser[]>([]);
   const [username, setUsername] = useState("");
+  const [inviteRole, setInviteRole] = useState<"member" | "viewer">("member");
   const [msg, setMsg] = useState<{ text: string; error?: boolean } | null>(null);
   const owner = info?.ownerId === me?.id;
   const canManage = owner || !!me?.isAdmin;
@@ -55,7 +56,10 @@ export function ShareDialog({ board, onClose }: { board: Board; onClose: () => v
               e.preventDefault();
               const u = username.trim();
               if (!u) return;
-              void run(() => invite(board.id, u), `Invited ${people.find((p) => p.username === u.toLowerCase())?.displayName ?? u}. They'll see it on their Home page.`).then(() => setUsername(""));
+              void run(
+                () => invite(board.id, u, inviteRole),
+                `Invited ${people.find((p) => p.username === u.toLowerCase())?.displayName ?? u}${inviteRole === "viewer" ? " to look at this board" : ""}. They'll see it on their Home page.`,
+              ).then(() => setUsername(""));
             }}
           >
             <input
@@ -73,6 +77,15 @@ export function ShareDialog({ board, onClose }: { board: Board; onClose: () => v
                 </option>
               ))}
             </datalist>
+            <select
+              value={inviteRole}
+              title="What they can do on this board"
+              aria-label="Role"
+              onChange={(e) => setInviteRole(e.target.value as "member" | "viewer")}
+            >
+              <option value="member">Can edit</option>
+              <option value="viewer">View only</option>
+            </select>
             <button className="btn primary" disabled={!username.trim()}>
               <Send size={14} /> Invite
             </button>
@@ -93,9 +106,29 @@ export function ShareDialog({ board, onClose }: { board: Board; onClose: () => v
                 <span className="chip small">
                   <Crown size={12} /> Owner
                 </span>
+              ) : !canManage ? (
+                m.role === "viewer" && (
+                  <span className="chip small" title="They can look at this board but not change it">
+                    <Eye size={12} /> View only
+                  </span>
+                )
               ) : (
                 canManage && (
                   <>
+                    <select
+                      value={m.role}
+                      title={`What ${m.displayName} can do on this board`}
+                      aria-label={`Role of ${m.displayName}`}
+                      onChange={(e) =>
+                        void run(
+                          () => setMemberRole(board.id, m.userId, e.target.value as "member" | "viewer"),
+                          e.target.value === "viewer" ? `${m.displayName} can only look now` : `${m.displayName} can edit now`,
+                        )
+                      }
+                    >
+                      <option value="member">Can edit</option>
+                      <option value="viewer">View only</option>
+                    </select>
                     {owner && (
                       <button
                         className="btn sm ghost"
@@ -165,8 +198,8 @@ export function ShareDialog({ board, onClose }: { board: Board; onClose: () => v
           </button>
         )}
         <p className="muted small">
-          Everyone on a board can add, change and complete its cards. Only the owner can invite people, remove them, archive
-          or delete the board.
+          People who can edit may add, change and complete the board's cards; view-only people can just look. Only the owner
+          can invite people, remove them, change what they can do, archive or delete the board.
         </p>
       </div>
     </Modal>

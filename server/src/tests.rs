@@ -191,6 +191,58 @@ async fn boards_are_private_until_shared() {
 }
 
 #[tokio::test]
+async fn viewers_can_look_but_not_touch() {
+    let t = T::new();
+    let (pat, sam, _alex) = t.people().await;
+    t.board(&pat, "b1").await;
+
+    // Invited as a viewer: the invitation carries the role.
+    let r = t.post("/api/boards/b1/invite", &pat, json!({ "username": "sam", "role": "viewer" })).await;
+    assert!(r.ok(), "invite viewer: {} {}", r.status, r.text);
+    assert!(!t.post("/api/boards/b1/invite", &pat, json!({ "username": "alex", "role": "boss" })).await.ok(), "made-up roles are refused");
+    let id = t.get("/api/invites", &sam).await.json()[0]["id"].as_str().expect("an invitation").to_string();
+    assert!(t.post(&format!("/api/invites/{id}/accept"), &sam, json!({})).await.ok());
+
+    // Viewers see the board and its cards.
+    assert!(t.boards_of(&sam).await.contains(&"b1".to_string()), "viewers see the board");
+    assert_eq!(t.card_title(&sam, "b1-c").await.as_deref(), Some("Paint fence"));
+
+    // ...but every change is refused and listed in `rejected`.
+    let r = t.post("/api/sync", &sam, json!({ "upserts": { "cards": [{ "id": "b1-c", "boardId": "b1", "listId": "b1-l", "title": "Changed" }] } })).await;
+    assert_eq!(r.json()["rejected"].as_array().map(Vec::len), Some(1), "a viewer's edit comes back rejected");
+    assert_eq!(t.card_title(&pat, "b1-c").await.as_deref(), Some("Paint fence"), "viewers can't change cards");
+    t.post("/api/sync", &sam, json!({ "upserts": { "lists": [{ "id": "v-l", "boardId": "b1", "title": "x", "order": 9 }] } })).await;
+    assert!(t.get("/api/data", &pat).await.json()["lists"].get("v-l").is_none(), "viewers can't add buckets");
+    t.post("/api/sync", &sam, json!({ "deletes": { "cards": ["b1-c"] } })).await;
+    assert_eq!(t.card_title(&pat, "b1-c").await.as_deref(), Some("Paint fence"), "viewers can't delete cards");
+    t.post("/api/sync", &sam, json!({ "upserts": { "boards": [{ "id": "b1", "title": "Renamed" }] } })).await;
+    assert_eq!(t.get("/api/data", &sam).await.json()["boards"]["b1"]["title"], "Board b1", "viewers can't change the board itself");
+
+    // Members can't drag a card off a board that's view-only for them onto their own board.
+    t.board(&sam, "b2").await;
+    t.post("/api/sync", &sam, json!({ "upserts": { "cards": [{ "id": "b1-c", "boardId": "b2", "listId": "b2-l", "title": "Taken" }] } })).await;
+    assert_eq!(t.get("/api/data", &pat).await.json()["cards"]["b1-c"]["boardId"], "b1");
+
+    // The sharing page says who's a viewer, and the owner can switch roles.
+    let members = t.get("/api/boards/b1/sharing", &pat).await.json()["members"].clone();
+    let sam_row = members.as_array().unwrap().iter().find(|m| m["username"] == "sam").expect("sam is on the board").clone();
+    assert_eq!(sam_row["role"], "viewer");
+    let sam_id = sam_row["userId"].as_str().unwrap().to_string();
+    let not_owner = t.req("PATCH", &format!("/api/boards/b1/members/{sam_id}"), Some(&sam), Some(json!({ "role": "member" })), Some("http://zomello.test")).await;
+    assert!(!not_owner.ok(), "only the owner changes roles");
+    let r = t.req("PATCH", &format!("/api/boards/b1/members/{sam_id}"), Some(&pat), Some(json!({ "role": "member" })), Some("http://zomello.test")).await;
+    assert!(r.ok(), "promote: {} {}", r.status, r.text);
+    let r = t.post("/api/sync", &sam, json!({ "upserts": { "cards": [{ "id": "b1-c", "boardId": "b1", "listId": "b1-l", "title": "Painted by Sam" }] } })).await;
+    assert!(r.ok());
+    assert_eq!(t.card_title(&pat, "b1-c").await.as_deref(), Some("Painted by Sam"), "promoted to member, they can edit");
+    assert!(t.req("PATCH", &format!("/api/boards/b1/members/{sam_id}"), Some(&pat), Some(json!({ "role": "viewer" })), Some("http://zomello.test")).await.ok(), "and back to viewer");
+
+    // The owner's own role can't be changed away.
+    let pat_id = members.as_array().unwrap().iter().find(|m| m["role"] == "owner").unwrap()["userId"].as_str().unwrap().to_string();
+    assert!(!t.req("PATCH", &format!("/api/boards/b1/members/{pat_id}"), Some(&pat), Some(json!({ "role": "viewer" })), Some("http://zomello.test")).await.ok());
+}
+
+#[tokio::test]
 async fn admin_pages_and_turning_people_off() {
     let t = T::new();
     let (pat, sam, _) = t.people().await;

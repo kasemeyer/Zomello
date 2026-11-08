@@ -74,8 +74,9 @@ export interface Member {
   userId: ID;
   displayName: string;
   username: string;
-  role: "owner" | "member";
+  role: "owner" | "member" | "viewer";
 }
+export type MemberRole = Member["role"];
 export interface Invite {
   id: ID;
   boardId: ID;
@@ -84,10 +85,13 @@ export interface Invite {
   created: number;
 }
 export const sharing = (boardId: ID) =>
-  api<{ ownerId: ID; members: Member[]; pending: { id: ID; userId: ID; displayName: string; username: string }[] }>(`/api/boards/${boardId}/sharing`);
-export const invite = (boardId: ID, username: string) => api(`/api/boards/${boardId}/invite`, { method: "POST", json: { username } });
+  api<{ ownerId: ID; members: Member[]; pending: { id: ID; userId: ID; displayName: string; username: string; role: MemberRole }[] }>(`/api/boards/${boardId}/sharing`);
+export const invite = (boardId: ID, username: string, role: "member" | "viewer" = "member") =>
+  api(`/api/boards/${boardId}/invite`, { method: "POST", json: { username, role } });
 export const cancelInvite = (id: ID) => api(`/api/invites/${id}`, { method: "DELETE" });
 export const removeMember = (boardId: ID, userId: ID) => api(`/api/boards/${boardId}/members/${userId}`, { method: "DELETE" });
+export const setMemberRole = (boardId: ID, userId: ID, role: "member" | "viewer") =>
+  api(`/api/boards/${boardId}/members/${userId}`, { method: "PATCH", json: { role } });
 export const leaveBoard = (boardId: ID) => api(`/api/boards/${boardId}/leave`, { method: "POST" });
 export const transferBoard = (boardId: ID, userId: ID) => api(`/api/boards/${boardId}/transfer`, { method: "POST", json: { userId } });
 export const myInvites = () => api<Invite[]>("/api/invites");
@@ -95,6 +99,10 @@ export const answerInvite = (id: ID, answer: "accept" | "decline") => api(`/api/
 
 /** Is this board yours (as opposed to shared with you)? Everything is yours outside server mode. */
 export const ownsBoard = (b: Board) => !isServer || !b.ownerId || b.ownerId === me?.id;
+
+/** Can you change this board, or only look at it? Everything is editable outside server mode. */
+export const canEditBoard = (b: Board | undefined): boolean =>
+  !isServer || !b?.members || b.members.find((m) => m.userId === me?.id)?.role !== "viewer";
 
 // ---- Admin ----
 

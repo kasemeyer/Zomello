@@ -259,7 +259,7 @@ export interface Board {
   calendarFeeds?: CalendarFeed[];
   /** Zomello Server only (set by the server): who owns the board, and everyone on it. */
   ownerId?: ID;
-  members?: { userId: ID; displayName: string; username: string; role: "owner" | "member" }[];
+  members?: { userId: ID; displayName: string; username: string; role: "owner" | "member" | "viewer" }[];
   order: number;
   createdAt: number;
 }

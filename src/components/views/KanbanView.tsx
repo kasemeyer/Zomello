@@ -48,6 +48,7 @@ import {
 } from "lucide-react";
 import type { BadgeKey, BadgeMode, Board, Card, GroupBy, ID, List, Priority, Progress } from "../../types";
 import { useStore } from "../../store";
+import { canEditBoard } from "../../server";
 import { useWhen, withWhen } from "../WhenChip";
 import { buildGroups, byOrder, PRIORITIES, PROGRESS, SORT_MODES, sortCards, type Group } from "../../utils";
 import { CardTile } from "../CardTile";
@@ -178,9 +179,12 @@ export function KanbanView({
     () => dragCols ?? Object.fromEntries(groups.map((g) => [g.id, g.cards.filter((c) => isActive(c, g)).map((c) => c.id)])),
     [dragCols, groups, hideCompleted],
   );
-  const canDrag = DRAGGABLE.includes(groupBy);
+  // Someone the board is view-only for gets no drag and no composers; the store blocks anything missed.
+  const canEdit = canEditBoard(board);
+  const canDrag = DRAGGABLE.includes(groupBy) && canEdit;
 
-  const sensors = useDragSensors(6, useSensor(DeliberateKeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const allSensors = useDragSensors(6, useSensor(DeliberateKeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const sensors = canEdit ? allSensors : [];
   const phone = useIsPhone();
   const edge = useEdgePaging(phone);
 
@@ -304,7 +308,7 @@ export function KanbanView({
             />
           ))}
         </SortableContext>
-        {groupBy === "bucket" && <AddList boardId={board.id} />}
+        {groupBy === "bucket" && canEdit && <AddList boardId={board.id} />}
       </div>
       <DragOverlay dropAnimation={null}>
         {activeCard ? (
@@ -549,7 +553,7 @@ function Column({
           )}
         </SortableContext>
       </div>
-      {group.patch && lists.length > 0 && <AddCard group={group} lists={lists} />}
+      {group.patch && lists.length > 0 && canEditBoard(board) && <AddCard group={group} lists={lists} />}
       {displayOpen && list && <BucketDisplayDialog list={list} board={board} onClose={() => setDisplayOpen(false)} />}
       {rulesOpen && list && <BucketRulesDialog list={list} board={board} onClose={() => setRulesOpen(false)} />}
       {completed.length > 0 && (

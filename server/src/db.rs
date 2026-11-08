@@ -57,6 +57,7 @@ fn migrate(db: &Connection) -> rusqlite::Result<()> {
            board_id TEXT NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
            from_user TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
            to_user TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+           role TEXT NOT NULL DEFAULT 'member',
            created INTEGER NOT NULL,
            UNIQUE (board_id, to_user)
          );
@@ -90,6 +91,11 @@ fn migrate(db: &Connection) -> rusqlite::Result<()> {
            created INTEGER NOT NULL
          );",
     )?;
+    // Databases from before boards had viewers: invitations didn't carry a role.
+    let has_role: i64 = db.query_row("SELECT COUNT(*) FROM pragma_table_info('invites') WHERE name = 'role'", [], |r| r.get(0))?;
+    if has_role == 0 {
+        db.execute("ALTER TABLE invites ADD COLUMN role TEXT NOT NULL DEFAULT 'member'", [])?;
+    }
     db.execute("INSERT OR IGNORE INTO meta (key, value) VALUES ('schema', '1')", [])?;
     Ok(())
 }
@@ -143,6 +149,13 @@ pub fn user_count(db: &Connection) -> rusqlite::Result<i64> {
 
 pub fn is_member(db: &Connection, board: &str, user: &str) -> rusqlite::Result<bool> {
     db.query_row("SELECT 1 FROM members WHERE board_id = ? AND user_id = ?", params![board, user], |_| Ok(()))
+        .optional()
+        .map(|o| o.is_some())
+}
+
+/// Can this person change the board's contents? Viewers can only look.
+pub fn can_edit(db: &Connection, board: &str, user: &str) -> rusqlite::Result<bool> {
+    db.query_row("SELECT 1 FROM members WHERE board_id = ? AND user_id = ? AND role != 'viewer'", params![board, user], |_| Ok(()))
         .optional()
         .map(|o| o.is_some())
 }

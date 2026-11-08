@@ -172,8 +172,12 @@ pub async fn sync(State(app): State<App>, headers: HeaderMap, Json(req): Json<Sy
                     tx.execute("INSERT INTO boards (id, owner_id, data, updated) VALUES (?, ?, ?, ?)", params![id, user.id, strip_server_fields(b).to_string(), t]).ok();
                     tx.execute("INSERT OR IGNORE INTO members (board_id, user_id, role, added) VALUES (?, ?, 'owner', ?)", params![id, user.id, t]).ok();
                 }
-                Some(_) if db::is_member(&tx, &id, &user.id).unwrap_or(false) => {
+                Some(_) if db::can_edit(&tx, &id, &user.id).unwrap_or(false) => {
                     tx.execute("UPDATE boards SET data = ?, updated = ? WHERE id = ?", params![strip_server_fields(b).to_string(), t, id]).ok();
+                }
+                Some(_) if db::is_member(&tx, &id, &user.id).unwrap_or(false) => {
+                    reject("board", &id, "the board is view-only for you");
+                    continue;
                 }
                 Some(_) => {
                     reject("board", &id, "not shared with you");
@@ -191,11 +195,15 @@ pub async fn sync(State(app): State<App>, headers: HeaderMap, Json(req): Json<Sy
                     reject(kind, &id, "board not shared with you");
                     continue;
                 }
-                // Moving between boards needs access to both.
+                if !db::can_edit(&tx, &board, &user.id).unwrap_or(false) {
+                    reject(kind, &id, "the board is view-only for you");
+                    continue;
+                }
+                // Moving between boards needs edit access to both.
                 let old: Option<String> = tx.query_row(&format!("SELECT board_id FROM {table} WHERE id = ?"), [&id], |r| r.get(0)).optional().ok().flatten();
                 if let Some(old) = &old {
-                    if old != &board && !db::is_member(&tx, old, &user.id).unwrap_or(false) {
-                        reject(kind, &id, "it's on a board not shared with you");
+                    if old != &board && !db::can_edit(&tx, old, &user.id).unwrap_or(false) {
+                        reject(kind, &id, "it's on a board you can't edit");
                         continue;
                     }
                     touched.insert(old.clone());
@@ -217,6 +225,10 @@ pub async fn sync(State(app): State<App>, headers: HeaderMap, Json(req): Json<Sy
                 };
                 if !db::is_member(&tx, &board, &user.id).unwrap_or(false) {
                     reject(kind, &id, "board not shared with you");
+                    continue;
+                }
+                if !db::can_edit(&tx, &board, &user.id).unwrap_or(false) {
+                    reject(kind, &id, "the board is view-only for you");
                     continue;
                 }
                 tx.execute(&format!("DELETE FROM {table} WHERE id = ?"), [&id]).ok();

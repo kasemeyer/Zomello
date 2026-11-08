@@ -1,5 +1,6 @@
-//! Sharing boards: the owner invites people by username, they accept (or decline) from their Home
-//! page, members work on the board together, and anyone but the owner can leave.
+//! Sharing boards: the owner invites people by username — as members who work on the board, or as
+//! viewers who can only look — they accept (or decline) from their Home page, and anyone but the
+//! owner can leave. The owner can switch anyone between member and viewer later.
 
 use crate::{auth, db, err, now, random_hex, App, ApiResult, Event};
 use axum::{
@@ -35,11 +36,11 @@ pub async fn sharing(State(app): State<App>, headers: HeaderMap, Path(board): Pa
         return Err(err(StatusCode::FORBIDDEN, "That board isn't shared with you."));
     }
     let mut st = db
-        .prepare("SELECT i.id, u.id, u.display_name, u.username, i.created FROM invites i JOIN users u ON u.id = i.to_user WHERE i.board_id = ?")
+        .prepare("SELECT i.id, u.id, u.display_name, u.username, i.created, i.role FROM invites i JOIN users u ON u.id = i.to_user WHERE i.board_id = ?")
         .unwrap();
     let pending: Vec<Value> = st
         .query_map([&board], |r| {
-            Ok(json!({ "id": r.get::<_, String>(0)?, "userId": r.get::<_, String>(1)?, "displayName": r.get::<_, String>(2)?, "username": r.get::<_, String>(3)?, "created": r.get::<_, i64>(4)? }))
+            Ok(json!({ "id": r.get::<_, String>(0)?, "userId": r.get::<_, String>(1)?, "displayName": r.get::<_, String>(2)?, "username": r.get::<_, String>(3)?, "created": r.get::<_, i64>(4)?, "role": r.get::<_, String>(5)? }))
         })
         .unwrap()
         .flatten()
@@ -55,11 +56,24 @@ pub async fn sharing(State(app): State<App>, headers: HeaderMap, Path(board): Pa
 #[derive(Deserialize)]
 pub struct InviteReq {
     username: String,
+    /// "member" (the default) or "viewer".
+    #[serde(default)]
+    role: Option<String>,
+}
+
+/// A member's role as sharing accepts it: viewers look, members edit (owner is set elsewhere).
+fn valid_role(role: Option<&str>) -> Result<&'static str, axum::response::Response> {
+    match role {
+        None | Some("member") => Ok("member"),
+        Some("viewer") => Ok("viewer"),
+        Some(_) => Err(err(StatusCode::BAD_REQUEST, "The role must be member or viewer.")),
+    }
 }
 
 /// POST /api/boards/{id}/invite: the owner invites someone by username.
 pub async fn invite(State(app): State<App>, headers: HeaderMap, Path(board): Path<String>, Json(req): Json<InviteReq>) -> ApiResult {
     let user = auth::require(&app, &headers)?;
+    let role = valid_role(req.role.as_deref())?;
     let to = {
         let db = app.db.lock().unwrap();
         let owner = db::board_owner(&db, &board).ok().flatten().ok_or_else(|| err(StatusCode::NOT_FOUND, "No such board"))?;
@@ -74,8 +88,8 @@ pub async fn invite(State(app): State<App>, headers: HeaderMap, Path(board): Pat
             return Err(err(StatusCode::CONFLICT, &format!("{} is already on this board.", to.display_name)));
         }
         db.execute(
-            "INSERT OR IGNORE INTO invites (id, board_id, from_user, to_user, created) VALUES (?, ?, ?, ?, ?)",
-            params![random_hex(10), board, user.id, to.id, now()],
+            "INSERT OR IGNORE INTO invites (id, board_id, from_user, to_user, role, created) VALUES (?, ?, ?, ?, ?, ?)",
+            params![random_hex(10), board, user.id, to.id, role, now()],
         )
         .ok();
         to
@@ -104,8 +118,8 @@ pub async fn answer_invite(State(app): State<App>, headers: HeaderMap, Path((id,
     let user = auth::require(&app, &headers)?;
     let board = {
         let db = app.db.lock().unwrap();
-        let (board, to): (String, String) = db
-            .query_row("SELECT board_id, to_user FROM invites WHERE id = ?", [&id], |r| Ok((r.get(0)?, r.get(1)?)))
+        let (board, to, role): (String, String, String) = db
+            .query_row("SELECT board_id, to_user, role FROM invites WHERE id = ?", [&id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))
             .optional()
             .ok()
             .flatten()
@@ -115,7 +129,7 @@ pub async fn answer_invite(State(app): State<App>, headers: HeaderMap, Path((id,
         }
         db.execute("DELETE FROM invites WHERE id = ?", [&id]).ok();
         if answer == "accept" {
-            db.execute("INSERT OR IGNORE INTO members (board_id, user_id, role, added) VALUES (?, ?, 'member', ?)", params![board, user.id, now()]).ok();
+            db.execute("INSERT OR IGNORE INTO members (board_id, user_id, role, added) VALUES (?, ?, ?, ?)", params![board, user.id, role, now()]).ok();
         }
         board
     };
@@ -160,6 +174,33 @@ pub async fn remove_member(State(app): State<App>, headers: HeaderMap, Path((boa
         db.execute("DELETE FROM members WHERE board_id = ? AND user_id = ?", params![board, member]).ok();
     }
     reload(&app, &board, &[&member]);
+    Ok("ok".into_response())
+}
+
+#[derive(Deserialize)]
+pub struct RoleReq {
+    role: String,
+}
+
+/// PATCH /api/boards/{id}/members/{user}: the owner (or an admin) makes someone a member or a viewer.
+pub async fn set_role(State(app): State<App>, headers: HeaderMap, Path((board, member)): Path<(String, String)>, Json(req): Json<RoleReq>) -> ApiResult {
+    let user = auth::require(&app, &headers)?;
+    let role = valid_role(Some(&req.role))?;
+    {
+        let db = app.db.lock().unwrap();
+        let owner = db::board_owner(&db, &board).ok().flatten().ok_or_else(|| err(StatusCode::NOT_FOUND, "No such board"))?;
+        if owner != user.id && !user.is_admin {
+            return Err(err(StatusCode::FORBIDDEN, "Only the board's owner can change roles."));
+        }
+        if member == owner {
+            return Err(err(StatusCode::BAD_REQUEST, "The owner always edits. Give the board to someone else first."));
+        }
+        let n = db.execute("UPDATE members SET role = ? WHERE board_id = ? AND user_id = ?", params![role, board, member]).unwrap_or(0);
+        if n == 0 {
+            return Err(err(StatusCode::NOT_FOUND, "They're not on this board."));
+        }
+    }
+    reload(&app, &board, &[]);
     Ok("ok".into_response())
 }
 
