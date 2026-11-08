@@ -200,10 +200,22 @@ function BoardHeader({ board, view }: { board: Board; view: ViewMode }) {
         ))}
       </nav>
       <div className="grow" />
-      <LabelManager board={board} />
-      <button className="btn ghost sm" title="Customize (B)" aria-label="Customize" onClick={() => useStore.getState().setOverlay({ customizeBoardId: board.id })}>
-        <Palette size={14} /> <span className="btn-label">Customize</span>
-      </button>
+      {isServer && (
+        <button
+          className="btn ghost sm"
+          title={ownsBoard(board) ? "Who's on this board, and what they can do" : "People on this board"}
+          aria-label="Share"
+          onClick={() => useStore.getState().setOverlay({ shareBoardId: board.id })}
+        >
+          <Users size={14} /> <span className="btn-label">{ownsBoard(board) ? "Share" : "People"}</span>
+        </button>
+      )}
+      {canEdit && <LabelManager board={board} />}
+      {canEdit && (
+        <button className="btn ghost sm" title="Customize (B)" aria-label="Customize" onClick={() => useStore.getState().setOverlay({ customizeBoardId: board.id })}>
+          <Palette size={14} /> <span className="btn-label">Customize</span>
+        </button>
+      )}
       <Popover
         align="right"
         trigger={(_, toggle) => (
