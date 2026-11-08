@@ -27,12 +27,20 @@ COPY --from=web /src/dist ../dist
 RUN touch src/main.rs && cargo build --release --locked
 RUN mkdir -p /out/data && cp target/release/zomello-server /out/
 
-# 3. A tiny runtime: no shell, no package manager, runs as a non-root user.
-FROM gcr.io/distroless/cc-debian12:nonroot
+# 3. A small runtime, still non-root. (It was distroless; Litestream support needs a shell for the
+#    restore-then-run entrypoint, and ca-certificates so Litestream can reach Azure over TLS.)
+FROM litestream/litestream:0.3.13 AS litestream
+
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/* \
+    && useradd --uid 65532 --user-group nonroot
 COPY --from=server /out/zomello-server /usr/local/bin/zomello-server
+COPY --from=litestream /usr/local/bin/litestream /usr/local/bin/litestream
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY --from=server --chown=nonroot:nonroot /out/data /data
 ENV ZOMELLO_DATA=/data ZOMELLO_PORT=7311
+USER nonroot
 VOLUME /data
 EXPOSE 7311
 HEALTHCHECK --interval=30s --timeout=6s --start-period=10s CMD ["zomello-server", "health"]
-ENTRYPOINT ["zomello-server"]
+ENTRYPOINT ["docker-entrypoint.sh"]

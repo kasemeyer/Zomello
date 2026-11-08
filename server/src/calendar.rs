@@ -11,7 +11,7 @@ use tokio::io::{AsyncRead, AsyncWrite};
 const MAX_BYTES: usize = 15 * 1024 * 1024;
 const TIMEOUT: Duration = Duration::from_secs(25);
 
-fn tls() -> Arc<rustls::ClientConfig> {
+pub fn tls() -> Arc<rustls::ClientConfig> {
     let mut roots = rustls::RootCertStore::empty();
     roots.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
     Arc::new(

@@ -14,6 +14,9 @@ rusqlite = { version = "0.32", features = ["bundled"] }
 argon2 = "0.5"
 getrandom = "0.3"
 sha2 = "0.10"
+# attachments in Azure Blob Storage (blob.rs)
+hmac = "0.12"
+base64 = "0.22"
 futures-util = { version = "0.3", default-features = false }
 rust-embed = "8"
 mime_guess = "2"

@@ -13,9 +13,12 @@ use std::path::{Component, Path, PathBuf};
 
 const ATTACH_DIR: &str = "attachments";
 
+/// ASCII letters, digits, "-", "_" and "." only, so the stored path needs no escaping anywhere it
+/// goes — the filesystem, a URL, or a blob name (blob.rs signs the path as-is). The file's real
+/// name stays on the card; this only names the copy in storage.
 fn safe_name(name: &str) -> String {
-    let s: String = name.chars().map(|c| if c.is_alphanumeric() || "-_. ".contains(c) { c } else { '_' }).collect();
-    let s = s.trim().trim_start_matches('.').to_string();
+    let s: String = name.chars().map(|c| if c.is_ascii_alphanumeric() || "-_.".contains(c) { c } else { '_' }).collect();
+    let s = s.trim_matches('_').trim_start_matches('.').to_string();
     if s.is_empty() { "file".into() } else { s.chars().take(120).collect() }
 }
 
@@ -51,9 +54,14 @@ pub async fn upload(State(app): State<App>, headers: HeaderMap, body: Bytes) -> 
     let user = auth::require(&app, &headers)?;
     let name = headers.get("x-name").and_then(|v| v.to_str().ok()).map(percent_decode).unwrap_or_else(|| "file".into());
     let rel = format!("{ATTACH_DIR}/{}{}/{}", now(), random_hex(4), safe_name(&name));
-    let abs = app.config.data_dir.join(&rel);
-    tokio::fs::create_dir_all(abs.parent().unwrap()).await.map_err(|e| err(StatusCode::INTERNAL_SERVER_ERROR, &e.to_string()))?;
-    tokio::fs::write(&abs, &body).await.map_err(|e| err(StatusCode::INTERNAL_SERVER_ERROR, &e.to_string()))?;
+    if let Some(store) = crate::blob::store() {
+        let mime = mime_guess::from_path(&rel).first_or_octet_stream().to_string();
+        store.put(&rel, &mime, body).await.map_err(|e| err(StatusCode::BAD_GATEWAY, &e))?;
+    } else {
+        let abs = app.config.data_dir.join(&rel);
+        tokio::fs::create_dir_all(abs.parent().unwrap()).await.map_err(|e| err(StatusCode::INTERNAL_SERVER_ERROR, &e.to_string()))?;
+        tokio::fs::write(&abs, &body).await.map_err(|e| err(StatusCode::INTERNAL_SERVER_ERROR, &e.to_string()))?;
+    }
     app.db.lock().unwrap().execute("INSERT OR REPLACE INTO attachments (rel, uploader, created) VALUES (?, ?, ?)", params![rel, user.id, now()]).ok();
     Ok(rel.into_response())
 }
@@ -80,7 +88,19 @@ pub async fn file(State(app): State<App>, headers: HeaderMap, UrlPath(rel): UrlP
     if !allowed {
         return Err(err(StatusCode::FORBIDDEN, "Not allowed"));
     }
-    let bytes = tokio::fs::read(&path).await.map_err(|_| err(StatusCode::NOT_FOUND, "Not found"))?;
+    // The data folder first (files from before Blob storage was turned on), then Blob.
+    let bytes = match tokio::fs::read(&path).await {
+        Ok(b) => b,
+        Err(_) => match crate::blob::store() {
+            Some(store) => store
+                .get(&rel)
+                .await
+                .map_err(|e| err(StatusCode::BAD_GATEWAY, &e))?
+                .ok_or_else(|| err(StatusCode::NOT_FOUND, "Not found"))?
+                .to_vec(),
+            None => return Err(err(StatusCode::NOT_FOUND, "Not found")),
+        },
+    };
     let mime = mime_guess::from_path(&path).first_or_octet_stream().to_string();
     Ok(([(header::CONTENT_TYPE, mime), (header::CACHE_CONTROL, "private, max-age=86400".into())], bytes).into_response())
 }

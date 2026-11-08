@@ -16,6 +16,13 @@
 //!   ZOMELLO_NAME        the name the app shows for this server (default "Zomello on <computer name>")
 //!   ZOMELLO_DISCOVERY   on/off: announce this server on the local network (default on; off in Docker)
 //!
+//! For hosts whose disk doesn't survive a restart (Azure Container Apps, App Service):
+//!   ZOMELLO_DB_REPLICA  stream the database to Azure Blob Storage with Litestream (Docker image
+//!                       only): abs://account@container/path, key in LITESTREAM_AZURE_ACCOUNT_KEY
+//!   ZOMELLO_BLOB_ACCOUNT, ZOMELLO_BLOB_KEY, ZOMELLO_BLOB_CONTAINER (default "zomello-files"),
+//!   ZOMELLO_BLOB_ENDPOINT (only for the Azurite emulator)
+//!                       keep attached files in Azure Blob Storage instead of the data folder (blob.rs)
+//!
 //! Commands (e.g. `docker exec zomello zomello-server reset-password alice`):
 //!   zomello-server                          run the server
 //!   zomello-server reset-password <user>    set a new password (prompts, or reads ZOMELLO_PASSWORD)
@@ -27,6 +34,7 @@
 
 mod admin;
 mod auth;
+mod blob;
 mod calendar;
 mod db;
 mod discovery;
@@ -142,7 +150,7 @@ pub fn stamp() -> String {
 /// Settings from `settings.env` in the data folder (environment variables win).
 static FILE_SETTINGS: std::sync::OnceLock<Vec<(String, String)>> = std::sync::OnceLock::new();
 
-fn env(name: &str) -> Option<String> {
+pub fn env(name: &str) -> Option<String> {
     std::env::var(name)
         .ok()
         .or_else(|| FILE_SETTINGS.get()?.iter().find(|(k, _)| k == name).map(|(_, v)| v.clone()))
