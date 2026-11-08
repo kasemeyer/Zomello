@@ -200,6 +200,19 @@ function BoardHeader({ board, view }: { board: Board; view: ViewMode }) {
         ))}
       </nav>
       <div className="grow" />
+      {isServer && (board.members?.length ?? 0) > 1 && (
+        <button
+          className="member-stack"
+          title={board.members!.map((m) => m.displayName).join(", ")}
+          aria-label={`${board.members!.length} people on this board`}
+          onClick={() => useStore.getState().setOverlay({ shareBoardId: board.id })}
+        >
+          {board.members!.slice(0, 5).map((m) => (
+            <Avatar key={m.userId} name={m.displayName} size={26} />
+          ))}
+          {board.members!.length > 5 && <span className="member-more">+{board.members!.length - 5}</span>}
+        </button>
+      )}
       {isServer && (
         <button
           className="btn ghost sm"
