@@ -7,7 +7,7 @@ import { saveSignIn } from "../places";
 
 type Gate = "checking" | "in" | "login" | "setup" | "unreachable";
 
-/** Zomello Server: create the first (admin) account, or sign in, before the app loads. */
+/** TCI Boards server: create the first (admin) account, or sign in, before the app loads. */
 export function ServerGate({ children }: { children: ReactNode }) {
   const [gate, setGate] = useState<Gate>(isServer ? "checking" : "in");
   const [selfCert, setSelfCert] = useState(false);
@@ -44,7 +44,7 @@ export function ServerGate({ children }: { children: ReactNode }) {
     return (
       <div className="pair-screen">
         <ServerCrash size={36} className="muted" />
-        <h2>Can't reach the Zomello Server</h2>
+        <h2>Can't reach the TCI Boards server</h2>
         <p className="muted">Check your connection, or ask whoever runs the server whether it's up.</p>
         <button className="btn primary" onClick={() => (setGate("checking"), void check())}>
           Try again
@@ -61,7 +61,7 @@ export function ServerGate({ children }: { children: ReactNode }) {
 
 /**
  * The server makes its own https certificate: each device installs it once, so the browser trusts the
- * address (and offers to install Zomello as an app).
+ * address (and offers to install TCI Boards as an app).
  */
 export function CertHint() {
   const https = `https://${location.host}${location.pathname}`;
@@ -114,7 +114,7 @@ function LoginForm({ onDone, hint }: { onDone: () => void; hint?: ReactNode }) {
       }}
     >
       <LogoMark size={56} />
-      <h2>Sign in to Zomello</h2>
+      <h2>Sign in to TCI Boards</h2>
       <label>
         Username
         <input autoFocus autoComplete="username" autoCapitalize="none" spellCheck={false} value={username} onChange={(e) => setUsername(e.target.value)} />
@@ -127,7 +127,7 @@ function LoginForm({ onDone, hint }: { onDone: () => void; hint?: ReactNode }) {
       <button className="btn primary" disabled={busy || !username.trim() || !password}>
         <LogIn size={16} /> {busy ? "Signing in…" : "Sign in"}
       </button>
-      <p className="muted small">No account yet, or forgot your password? Ask whoever runs this Zomello Server.</p>
+      <p className="muted small">No account yet, or forgot your password? Ask whoever runs this TCI Boards server.</p>
       {hint}
       <PhoneBoardsButton />
     </form>
@@ -160,7 +160,7 @@ function SetupForm({ onDone, hint }: { onDone: () => void; hint?: ReactNode }) {
       }}
     >
       <LogoMark size={56} />
-      <h2>Set up your Zomello Server</h2>
+      <h2>Set up your TCI Boards server</h2>
       <p className="muted">Create the first account. It's the admin: it can add people and manage every board.</p>
       <label>
         Your name

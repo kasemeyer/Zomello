@@ -129,7 +129,7 @@ pub struct SetupReq {
 /// First run only: create the first account, an admin, and sign it in.
 pub async fn setup(State(app): State<App>, headers: HeaderMap, Json(req): Json<SetupReq>) -> ApiResult {
     if db::user_count(&app.db.lock().unwrap()).unwrap_or(1) > 0 {
-        return Err(err(StatusCode::CONFLICT, "Zomello is already set up. Sign in instead."));
+        return Err(err(StatusCode::CONFLICT, "TCI Boards is already set up. Sign in instead."));
     }
     let username = check_username(&req.username)?;
     check_password_rules(&req.password)?;
@@ -137,7 +137,7 @@ pub async fn setup(State(app): State<App>, headers: HeaderMap, Json(req): Json<S
     let id = {
         let db = app.db.lock().unwrap();
         if db::user_count(&db).unwrap_or(1) > 0 {
-            return Err(err(StatusCode::CONFLICT, "Zomello is already set up. Sign in instead."));
+            return Err(err(StatusCode::CONFLICT, "TCI Boards is already set up. Sign in instead."));
         }
         let id = random_hex(12);
         db.execute(

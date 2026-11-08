@@ -1,5 +1,5 @@
 /**
- * AI hand-off: Zomello never talks to an AI itself. These helpers build prompts / exports you paste into
+ * AI hand-off: TCI Boards never talks to an AI itself. These helpers build prompts / exports you paste into
  * any assistant, and read its reply (a small JSON format — or just a bullet list) back into the app.
  */
 import type { Board, Card, FieldDef, ID, List, Priority, Progress } from "./types";
@@ -120,7 +120,7 @@ export function promptAddCards(boardId: ID, listId: ID, request: string): string
   const existing = Object.values(data.cards)
     .filter((c) => c.listId === listId && !c.archived)
     .sort(byOrder);
-  return `You're helping me plan work in my task board app (Zomello).
+  return `You're helping me plan work in my task board app (TCI Boards).
 
 ## The board
 ${boardContext(board, liveLists(boardId), data.settings.people)}
@@ -142,7 +142,7 @@ Keep titles short and actionable; put detail in the description or checklist. On
 
 export function promptNewBoard(request: string): string {
   const { data } = useStore.getState();
-  return `You're helping me set up a new board in my task board app (Zomello). It works like Trello / Microsoft Planner: a board has buckets (columns) and cards.
+  return `You're helping me set up a new board in my task board app (TCI Boards). It works like Trello / Microsoft Planner: a board has buckets (columns) and cards.
 
 ## What the board is for
 ${request.trim() || "(describe the project here)"}
@@ -286,7 +286,7 @@ export function promptDelegate(boardId: ID, cards: Card[], task: DelegateTask, c
   const body = exportMarkdown(boardId, cards, { heading: scope, numbered: task === "workorder" });
   if (task === "none") return body;
   const ask = task === "custom" ? custom.trim() || "(describe what you want done)" : t.ask;
-  return `You're helping me with tasks from my task board app (Zomello).
+  return `You're helping me with tasks from my task board app (TCI Boards).
 
 ## Context
 ${boardContext(data.boards[boardId], liveLists(boardId), data.settings.people)}

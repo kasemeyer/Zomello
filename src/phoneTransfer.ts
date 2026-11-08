@@ -42,7 +42,7 @@ export async function sendBoardToPhone(boardId: ID, phone: Phone, move: boolean)
     const { bytes, missing } = await buildBoardFile(st.data, boardId);
     if (missing && move) throw new Error(`${missing === 1 ? "an attached file" : `${missing} attached files`} couldn't be read. Copy it instead.`);
     const tid = await invoke<string>("linked_send_board", bytes, { headers: { "x-device": phone.id } });
-    if (!(await received(tid, 45_000))) throw new Error(`${phone.name} didn't answer. Check that Zomello is open on it and try again.`);
+    if (!(await received(tid, 45_000))) throw new Error(`${phone.name} didn't answer. Check that TCI Boards is open on it and try again.`);
     if (move) useStore.getState().deleteBoard(boardId);
     useStore.getState().toast(`${move ? "Moved" : "Copied"} “${board.title}” to ${phone.name}`, { key });
   } catch (e) {
@@ -65,7 +65,7 @@ export async function takeBoardFromPhone(phone: Phone, boardId: ID, move: boolea
   const files = hasStoredFiles(data, boardId);
   if (files && move)
     return st.toast(
-      `“${board.title}” has files attached, and those stay on the phone. To bring them along, move it from the phone: in Zomello there, hold the board in the menu and choose Move to… > Computer.`,
+      `“${board.title}” has files attached, and those stay on the phone. To bring them along, move it from the phone: in TCI Boards there, hold the board in the menu and choose Move to… > Computer.`,
       { key: "send-board", action: { label: "Copy without files", run: () => void takeBoardFromPhone(phone, boardId, false) } },
     );
   // Stored files are on the phone, so they're left out here (links to websites come along).

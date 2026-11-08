@@ -21,7 +21,7 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: { componentStack?: string | null }) {
-    console.error("Zomello view crashed:", error, info.componentStack);
+    console.error("TCI Boards view crashed:", error, info.componentStack);
     logViewCrash(error, info.componentStack);
   }
 

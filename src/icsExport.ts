@@ -7,7 +7,7 @@ import { cardSpan } from "./utils";
 
 /**
  * A calendar file (.ics) of your dated cards, to import into Google Calendar, Outlook or Apple Calendar.
- * It's a snapshot: for dates that keep up to date, a Zomello Server has a calendar link (feed.rs), with the
+ * It's a snapshot: for dates that keep up to date, a TCI Boards server has a calendar link (feed.rs), with the
  * same events.
  */
 
@@ -39,7 +39,7 @@ const day = (d: Date) => format(d, "yyyyMMdd");
  */
 export function calendarFile(data: AppData, boardId?: ID): string {
   const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
-  let out = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ZomBeatz Media//Zomello//EN", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${esc(boardId ? data.boards[boardId]?.title ?? "Zomello" : "Zomello")}`].map(fold).join("");
+  let out = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ZomBeatz Media//TCI Boards//EN", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${esc(boardId ? data.boards[boardId]?.title ?? "TCI Boards" : "TCI Boards")}`].map(fold).join("");
   for (const c of Object.values(data.cards)) {
     const b = data.boards[c.boardId];
     const l = data.lists[c.listId];
@@ -71,7 +71,7 @@ export async function exportCalendarFile(boardId?: ID): Promise<void> {
   const text = calendarFile(st.data, boardId);
   const n = (text.match(/BEGIN:VEVENT/g) ?? []).length;
   if (!n) return st.toast(boardId ? "No dated cards on this board to put in a calendar" : "No dated cards to put in a calendar");
-  const title = boardId ? st.data.boards[boardId].title.replace(/[\\/:*?"<>|]+/g, " ").trim() || "Board" : "Zomello";
+  const title = boardId ? st.data.boards[boardId].title.replace(/[\\/:*?"<>|]+/g, " ").trim() || "Board" : "TCI Boards";
   try {
     const where = await saveBoardFile(new TextEncoder().encode(text), `${title} dates.ics`, "text/calendar");
     if (where === SHARE_LATER || !where) return;

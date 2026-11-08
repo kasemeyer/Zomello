@@ -2,7 +2,7 @@ import { useStore } from "./store";
 import type { Card, CardSection, Settings, ViewMode } from "./types";
 
 /**
- * Feature groups people can turn off in Settings > Features, so Zomello can start simple and grow.
+ * Feature groups people can turn off in Settings > Features, so TCI Boards can start simple and grow.
  * Turning a group off only hides the buttons and menu items that start it. Nothing is deleted: a card
  * that already uses a hidden feature still shows it (see `sectionShown`), and turning the group back on
  * brings everything back.
@@ -26,7 +26,7 @@ export type Preset = "simple" | "standard" | "everything";
 export const PRESETS: Record<Preset, { name: string; what: string; on: Feature[] }> = {
   simple: { name: "Simple", what: "Boards, cards, checklists, labels, due dates, reminders and the calendar", on: [] },
   standard: { name: "Standard", what: "Simple, plus planning extras, linked tasks, more views and board looks", on: ["planning", "linking", "views", "looks"] },
-  everything: { name: "Everything", what: "Every feature Zomello has", on: FEATURES.map((f) => f.id) },
+  everything: { name: "Everything", what: "Every feature TCI Boards has", on: FEATURES.map((f) => f.id) },
 };
 
 /** A group is on unless it was turned off, so people who never chose keep every feature they had. */

@@ -42,7 +42,7 @@ export function PasteCardsDialog({ boardId, listId, text: initial = "" }: { boar
 
   const add = () => {
     const st = useStore.getState();
-    // People on the pasted cards join this Zomello's people, so their cards stay assigned.
+    // People on the pasted cards join this TCI Boards's people, so their cards stay assigned.
     const people = st.data.settings.people;
     const extra = [...new Set(found.flatMap((c) => c.assignees ?? []))].filter((p) => !people.includes(p));
     if (extra.length) st.updateSettings({ people: [...people, ...extra] });
@@ -78,7 +78,7 @@ export function PasteCardsDialog({ boardId, listId, text: initial = "" }: { boar
             rows={9}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={"Paste cards copied from Zomello here (press and hold, then Paste).\nA plain list works too: one card per line."}
+            placeholder={"Paste cards copied from TCI Boards here (press and hold, then Paste).\nA plain list works too: one card per line."}
             spellCheck={false}
           />
         </label>

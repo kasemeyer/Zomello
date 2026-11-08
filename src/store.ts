@@ -245,7 +245,7 @@ const newCard = (boardId: ID, listId: ID, title: string, order: number, extra: P
 function sampleData(): AppData {
   // The tutorial board: each card shows one thing worth knowing.
   const board = newBoard("Getting started", PALETTE[6], 0);
-  board.description = "A tour of Zomello. Each card shows one feature; delete this board when you're done with it.";
+  board.description = "A tour of TCI Boards. Each card shows one feature; delete this board when you're done with it.";
   const lists = defaultBuckets(board.id);
   const [todo, doing, done] = lists;
   const d = (n: number) => toISO(addDays(new Date(), n));
@@ -291,7 +291,7 @@ function sampleData(): AppData {
       dueDate: d(-1),
       priority: "urgent",
     }),
-    newCard(board.id, done.id, "Install Zomello", 0, { progress: "completed", completedAt: Date.now() }),
+    newCard(board.id, done.id, "Install TCI Boards", 0, { progress: "completed", completedAt: Date.now() }),
   ];
   return {
     version: 1,
@@ -309,7 +309,7 @@ function sampleData(): AppData {
 /** Fill in any fields missing from older / hand-edited / imported files. */
 export function normalize(raw: unknown): AppData {
   const d = (raw ?? {}) as Partial<AppData>;
-  if (typeof d !== "object" || !d.boards || !d.lists || !d.cards) throw new Error("Not a Zomello data file");
+  if (typeof d !== "object" || !d.boards || !d.lists || !d.cards) throw new Error("Not a TCI Boards data file");
   const boards: AppData["boards"] = {};
   for (const b of Object.values(d.boards)) {
     const display = { ...defaultDisplay(), ...b.display };
@@ -360,7 +360,7 @@ export function normalize(raw: unknown): AppData {
       reminders: { ...defaultSettings().reminders, ...d.settings?.reminders },
       a11y: { ...defaultSettings().a11y, ...d.settings?.a11y },
       // Files from before the welcome guide existed belong to people who are already set up; a new
-      // account on a Zomello Server hasn't seen it yet.
+      // account on a TCI Boards server hasn't seen it yet.
       onboarded: d.settings?.onboarded ?? !isServer,
       unlockedStyles: d.settings?.unlockedStyles ?? [],
     },
@@ -416,14 +416,14 @@ interface State {
   helpOpen: boolean;
   welcomeOpen: boolean;
   customizeBoardId: ID | null;
-  /** Zomello Server: the board whose Share window is open. */
+  /** TCI Boards server: the board whose Share window is open. */
   shareBoardId: ID | null;
   toasts: Toast[];
   focus: FocusTimer | null;
   importOpen: boolean;
   /** Home > Start from a template. */
   templatesOpen: boolean;
-  /** Quick add opened with something already in it (text shared to Zomello from another app). */
+  /** Quick add opened with something already in it (text shared to TCI Boards from another app). */
   quickAddPrefill: { title: string; description: string } | null;
   aiDialog: AiDialogState | null;
   /** "Paste cards" window: where the cards go. */
@@ -454,11 +454,11 @@ interface State {
   replaceData(data: AppData): void;
   /** Adopt data another window just saved. */
   applyRemoteData(json: string): void;
-  /** Zomello Server: merge other people's changes. */
+  /** TCI Boards server: merge other people's changes. */
   applyServerOps(ops: Ops): void;
-  /** Zomello Server: your own settings/view changed in another tab. */
+  /** TCI Boards server: your own settings/view changed in another tab. */
   applyServerUserDoc(doc: Pick<AppData, "settings" | "ui" | "templates" | "savedFilters"> & Partial<Pick<AppData, "boardTemplates">>): void;
-  /** Zomello Server: load everything again (after sharing changes, or reconnecting). */
+  /** TCI Boards server: load everything again (after sharing changes, or reconnecting). */
   reloadFromServer(json: string): void;
   navigate(route: Route): void;
   /**

@@ -14,7 +14,7 @@ interface DeviceInfo {
   last_seen: number;
   /** Its boards show on this computer while it's connected. */
   show_boards: boolean;
-  /** The Zomello app on it has linked with this computer (it can share its boards). */
+  /** The TCI Boards app on it has linked with this computer (it can share its boards). */
   can_link: boolean;
 }
 interface RemoteStatus {
@@ -148,8 +148,8 @@ export function DevicesPanel() {
         <Smartphone size={16} /> Phones &amp; tablets
       </h3>
       <p className="muted small">
-        Use Zomello from phones and tablets on your home network, and install it on them as an app. It works while this
-        computer is on and Zomello is open; your data stays here, and only devices you pair can connect.
+        Use TCI Boards from phones and tablets on your home network, and install it on them as an app. It works while this
+        computer is on and TCI Boards is open; your data stays here, and only devices you pair can connect.
       </p>
 
       <ol className="setup-steps">
@@ -231,7 +231,7 @@ export function DevicesPanel() {
           ) : (
             <>
               <p className="small muted">
-                {FIREWALL_NAME[fw.kind]} blocks phones until you allow Zomello.{" "}
+                {FIREWALL_NAME[fw.kind]} blocks phones until you allow TCI Boards.{" "}
                 {fw.kind === "windows" ? "Windows will ask you to confirm." : "You'll be asked for your password."}
               </p>
               <button className="btn" disabled={!on || busy === "firewall"} onClick={() => void openFirewall()}>
@@ -299,7 +299,7 @@ export function DevicesPanel() {
           </p>
           <p>
             <b>iPhone/iPad:</b> open the file → Settings → General → VPN &amp; Device Management → Install; then Settings →
-            General → About → Certificate Trust Settings → turn on Zomello.
+            General → About → Certificate Trust Settings → turn on TCI Boards.
           </p>
           <p>
             <b>Windows / Mac / Linux computers:</b> open it and add it as a trusted root certificate (Windows: “Trusted Root

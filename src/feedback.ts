@@ -3,9 +3,9 @@ import { isRemote } from "./remote";
 import { isServer } from "./server";
 import { deviceWord, inTauri, isMobileApp, openExternal } from "./storage";
 
-const CONTACT = "info@zombeatzmedia.com";
+const CONTACT = "kasey.prichard@gmail.com";
 
-/** Which Zomello this is, in plain words ("the Android app", "the Windows app", "a browser on an iPad"…). */
+/** Which TCI Boards this is, in plain words ("the Android app", "the Windows app", "a browser on an iPad"…). */
 function whichZomello(): string {
   const ua = navigator.userAgent;
   const system = /Android/i.test(ua)
@@ -21,14 +21,14 @@ function whichZomello(): string {
             : /Linux/i.test(ua)
               ? "Linux"
               : "an unknown system";
-  const where = isServer ? ", on a Zomello Server" : isRemote ? ", using a computer's boards" : "";
+  const where = isServer ? ", on a TCI Boards server" : isRemote ? ", using a computer's boards" : "";
   if (isMobileApp || inTauri) return `the ${system} app${where}`;
   return `a browser on ${system}${where}`;
 }
 
 /** Help > Send feedback: an email to us with the version, device and recent problems already filled in. */
 export async function sendFeedback(): Promise<void> {
-  const subject = `Zomello feedback (${__APP_VERSION__})`;
+  const subject = `TCI Boards feedback (${__APP_VERSION__})`;
   // The last few problems from this device's log, if any (a mail link can't carry much more).
   let problems = await recentProblems(8);
   while (problems.join("\n").length > 1200) problems = problems.slice(1);
@@ -40,7 +40,7 @@ export async function sendFeedback(): Promise<void> {
     "1. ",
     "",
     "---",
-    `Zomello ${__APP_VERSION__}, ${whichZomello()} (this ${deviceWord}).`,
+    `TCI Boards ${__APP_VERSION__}, ${whichZomello()} (this ${deviceWord}).`,
     ...(problems.length ? ["", "Recent problems from this device's log:", ...problems] : []),
   ].join("\n");
   void openExternal(`mailto:${CONTACT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);

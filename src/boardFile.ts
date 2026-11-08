@@ -129,20 +129,20 @@ export function readBoardFile(bytes: Uint8Array): OpenedBoardFile {
   try {
     entries = unzipSync(bytes);
   } catch {
-    throw new Error("This isn't a Zomello board file (or it's damaged).");
+    throw new Error("This isn't a TCI Boards board file (or it's damaged).");
   }
   const json = entries["board.json"];
-  if (!json) throw new Error("This isn't a Zomello board file: board.json is missing.");
+  if (!json) throw new Error("This isn't a TCI Boards board file: board.json is missing.");
   const raw = JSON.parse(strFromU8(json));
-  if (raw?.format !== FORMAT || !raw.board) throw new Error("This isn't a Zomello board file.");
-  if (raw.version > VERSION) throw new Error("This board was saved by a newer Zomello. Update Zomello to open it.");
+  if (raw?.format !== FORMAT || !raw.board) throw new Error("This isn't a TCI Boards board file.");
+  if (raw.version > VERSION) throw new Error("This board was saved by a newer TCI Boards. Update TCI Boards to open it.");
   const { files: index = {}, ...bundle } = raw;
   return { bundle: bundle as BoardBundle, files: entries, index };
 }
 
 /**
  * Turn an opened file into new boards/lists/cards with fresh ids, copying its files into this
- * Zomello's storage. Links and sub-tasks between its cards are kept; links to anything else are dropped.
+ * TCI Boards's storage. Links and sub-tasks between its cards are kept; links to anything else are dropped.
  */
 export async function prepareImport(opened: OpenedBoardFile, order: number, takenTitles: string[] = []): Promise<{ board: Board; lists: List[]; cards: Card[]; people: string[] }> {
   const { bundle, files, index } = opened;
@@ -212,7 +212,7 @@ export async function exportBoard(boardId: ID): Promise<void> {
       if (saving) st.dismissToast(saving.id);
     }
     else if (isDesktopApp)
-      st.toast(`Saved ${where}${extra}. Send it to anyone with Zomello; opening it adds the board.`, {
+      st.toast(`Saved ${where}${extra}. Send it to anyone with TCI Boards; opening it adds the board.`, {
         key: "board-file",
         action: { label: "Show", run: () => void revealPath(where) },
       });
@@ -252,7 +252,7 @@ export async function openBoardFile(bytes: Uint8Array, verb = "Added"): Promise<
   }
 }
 
-/** A board file opened from the file manager (double-click / "Open with Zomello") or dropped on the window. */
+/** A board file opened from the file manager (double-click / "Open with TCI Boards") or dropped on the window. */
 export async function openBoardFilePath(path: string): Promise<void> {
   const buf = await invoke<ArrayBuffer>("read_dropped_file", { path });
   await openBoardFile(new Uint8Array(buf));

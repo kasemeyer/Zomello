@@ -760,9 +760,9 @@ function AttachmentsSection({ card, onFiles }: { card: Card; onFiles: (f: FileLi
                 {a.stored ? <FileText size={13} /> : local ? <HardDrive size={13} /> : <ExternalLink size={13} />}{" "}
                 {local || a.name.includes("%") ? decodeURIComponent(a.name) : a.name}
               </button>
-              <span className="muted small ellipsis grow">{a.stored ? `${fileSize(a.size)} · stored in Zomello` : display(a)}</span>
+              <span className="muted small ellipsis grow">{a.stored ? `${fileSize(a.size)} · stored in TCI Boards` : display(a)}</span>
               {local && inTauri && (
-                <button className="btn sm ghost" title="Copy the file into Zomello so it keeps working if the original moves" onClick={() => storeLinkedFile(card.id, a.id)}>
+                <button className="btn sm ghost" title="Copy the file into TCI Boards so it keeps working if the original moves" onClick={() => storeLinkedFile(card.id, a.id)}>
                   <Download size={12} /> Copy in
                 </button>
               )}

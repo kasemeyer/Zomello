@@ -9,7 +9,7 @@ import { ask, Avatar, Modal } from "./ui";
 
 type Sharing = Awaited<ReturnType<typeof sharing>>;
 
-/** Zomello Server: who's on a board, inviting people, and leaving. */
+/** TCI Boards server: who's on a board, inviting people, and leaving. */
 export function ShareDialog({ board, onClose }: { board: Board; onClose: () => void }) {
   const [info, setInfo] = useState<Sharing | null>(null);
   const [people, setPeople] = useState<DirectoryUser[]>([]);

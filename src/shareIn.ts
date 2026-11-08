@@ -1,5 +1,5 @@
 /**
- * Android: text or a link shared to Zomello from another app (the share sheet's "Add to Zomello") opens
+ * Android: text or a link shared to TCI Boards from another app (the share sheet's "Add to TCI Boards") opens
  * Quick add with it filled in. MainActivity keeps it until this page takes it.
  */
 export function installShareIn(): () => void {

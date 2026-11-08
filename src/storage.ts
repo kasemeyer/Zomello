@@ -175,7 +175,7 @@ export async function readBackup(timestamp: number): Promise<string> {
 }
 
 export async function dataLocation(): Promise<string> {
-  if (isServer) return "On your Zomello Server (an admin can back it up from the Admin page)";
+  if (isServer) return "On your TCI Boards server (an admin can back it up from the Admin page)";
   if (isRemote) return "On your computer (this device is connected to it)";
   return inTauri ? invoke<string>("data_location") : "Browser localStorage (dev mode)";
 }
@@ -198,7 +198,7 @@ export async function openExternal(target: string): Promise<void> {
 
 // ---- Stored attachments ----
 
-/** Copy a file into Zomello's storage. Returns the value to keep in `Attachment.url`. */
+/** Copy a file into TCI Boards's storage. Returns the value to keep in `Attachment.url`. */
 export async function storeFile(file: File): Promise<string> {
   if (isServer) return serverUpload(file);
   if (isRemote) return remoteUpload(file);
@@ -265,7 +265,7 @@ export async function notify(title: string, body: string): Promise<void> {
     const n = await import("@tauri-apps/plugin-notification");
     let ok = await n.isPermissionGranted();
     if (!ok) ok = (await n.requestPermission()) === "granted";
-    // Android: Zomello's own status-bar icon (res/drawable/ic_stat_zomello.xml); other systems ignore it.
+    // Android: TCI Boards's own status-bar icon (res/drawable/ic_stat_zomello.xml); other systems ignore it.
     if (ok) n.sendNotification({ title, body, ...(isMobileApp ? { icon: "ic_stat_zomello", iconColor: "#2580C3" } : {}) });
     return;
   }

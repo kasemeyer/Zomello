@@ -1,7 +1,7 @@
 import { useStore } from "./store";
 
 /**
- * Easter egg: click the Zomello logo five times quickly to drop the bass. The first time unlocks the
+ * Easter egg: click the TCI Boards logo five times quickly to drop the bass. The first time unlocks the
  * Bass Drop style (it then shows up in Settings → Appearance); after that, it switches back and forth.
  */
 const CLICKS = 5;
@@ -23,6 +23,6 @@ export function logoClicked(): boolean {
   }
   const on = s.style !== "bassdrop";
   st.updateSettings({ style: on ? "bassdrop" : "classic" });
-  st.toast(on ? "🎧 Bass Drop on" : "Back to classic Zomello", { key: "style" });
+  st.toast(on ? "🎧 Bass Drop on" : "Back to classic TCI Boards", { key: "style" });
   return on;
 }

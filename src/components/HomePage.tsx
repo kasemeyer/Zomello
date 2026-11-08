@@ -196,7 +196,7 @@ export function HomePage() {
   );
 }
 
-/** Zomello Server: boards you've been invited to. */
+/** TCI Boards server: boards you've been invited to. */
 function Invitations() {
   const invites = useInvites((s) => s.invites);
   if (!isServer || invites.length === 0) return null;

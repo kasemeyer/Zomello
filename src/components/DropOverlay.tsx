@@ -21,7 +21,7 @@ export function DropOverlay() {
             <FileUp size={40} />
             <b>Drop to attach</b>
             <span>to “{title}”</span>
-            <small>Files are copied into Zomello · links are saved as links</small>
+            <small>Files are copied into TCI Boards · links are saved as links</small>
           </>
         ) : (
           <>

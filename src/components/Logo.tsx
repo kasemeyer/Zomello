@@ -2,7 +2,7 @@ import { useStore } from "../store";
 
 /**
  * The TCI Boards mark (the same art as app-icon.svg, served from public/, so the icon and the
- * in-app logo can't drift apart). The original Zomello marks live on as the style Easter eggs.
+ * in-app logo can't drift apart). The original TCI Boards marks live on as the style Easter eggs.
  */
 export function LogoMark({ size = 28, animate = false }: { size?: number; animate?: boolean }) {
   const style = useStore((s) => s.data.settings.style);
@@ -51,7 +51,7 @@ function BassDropMark({ size, animate }: { size: number; animate: boolean }) {
 }
 
 /**
- * Party Cat: the classic Zomello mark, quietly a cat: tabby ears on the headband and a tail curling
+ * Party Cat: the classic TCI Boards mark, quietly a cat: tabby ears on the headband and a tail curling
  * out of an ear cup, in the Disco ball colors. It spins like the meme.
  */
 function PartyCatMark({ size, animate }: { size: number; animate: boolean }) {
@@ -164,7 +164,7 @@ export function Wordmark() {
   // Undead: the last "o" is a full moon.
   if (style === "undead")
     return (
-      <span className="wordmark" aria-label="Zomello">
+      <span className="wordmark" aria-label="TCI Boards">
         <span aria-hidden="true">Zom</span>
         <span aria-hidden="true">
           ell
@@ -185,7 +185,7 @@ export function Wordmark() {
     );
   return (
     <span className="wordmark">
-      Zom<span>ello</span>
+      TCI&nbsp;<span>Boards</span>
     </span>
   );
 }

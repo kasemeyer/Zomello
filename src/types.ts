@@ -46,7 +46,7 @@ export interface Attachment {
   /** A link/path, or for stored files `attachments/…` (relative to the data dir; data: URL in browser dev). */
   url: string;
   addedAt: number;
-  /** True when the file was copied into Zomello's own storage. */
+  /** True when the file was copied into TCI Boards's own storage. */
   stored?: boolean;
   size?: number;
   mime?: string;
@@ -257,7 +257,7 @@ export interface Board {
   category?: string | null;
   /** Calendars shown (read-only) in this board's Calendar view. */
   calendarFeeds?: CalendarFeed[];
-  /** Zomello Server only (set by the server): who owns the board, and everyone on it. */
+  /** TCI Boards server only (set by the server): who owns the board, and everyone on it. */
   ownerId?: ID;
   members?: { userId: ID; displayName: string; username: string; role: "owner" | "member" | "viewer" }[];
   order: number;
@@ -331,13 +331,13 @@ export interface A11ySettings {
   largerTargets: boolean;
 }
 
-/** A Zomello Server added in Settings → Zomello Servers. */
+/** A TCI Boards server added in Settings → TCI Boards servers. */
 export interface ServerEntry {
   id: ID;
   name: string;
   /** scheme://host:port */
   url: string;
-  /** "computer": a computer running the Zomello app with Phones & tablets on (phone app only). */
+  /** "computer": a computer running the TCI Boards app with Phones & tablets on (phone app only). */
   kind?: "server" | "computer";
 }
 
@@ -362,7 +362,7 @@ export interface Settings {
   style: AppStyle;
   /** Easter-egg styles found so far (they show up in Settings once found). */
   unlockedStyles: AppStyle[];
-  /** The version whose "New in Zomello" note has been seen (e.g. "0.6"). */
+  /** The version whose "New in TCI Boards" note has been seen (e.g. "0.6"). */
   seenWhatsNew?: string;
   /** The welcome guide has been seen (or skipped). */
   onboarded: boolean;
@@ -382,9 +382,9 @@ export interface Settings {
   titleRepeats?: boolean;
   /** Party Cat's cat sings now and then (and when clicked). */
   catSings?: boolean;
-  /** Desktop app: closing the window keeps Zomello running in the tray. */
+  /** Desktop app: closing the window keeps TCI Boards running in the tray. */
   runInBackground: boolean;
-  /** Zomello Servers this app can open (Plex style), alongside the boards stored here. */
+  /** TCI Boards servers this app can open (Plex style), alongside the boards stored here. */
   servers?: ServerEntry[];
   /** Feature groups turned on or off in Settings > Features (see features.ts). Missing = on. */
   features?: Partial<Record<import("./features").Feature, boolean>>;
@@ -441,7 +441,7 @@ export type Route =
   | { page: "board"; boardId: ID }
   | { page: "archive" }
   | { page: "settings" }
-  /** Zomello Server: admins only. */
+  /** TCI Boards server: admins only. */
   | { page: "admin" };
 
 /** A countdown ("focus") timer, optionally tied to a card's time tracking. */

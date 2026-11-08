@@ -1,13 +1,13 @@
 {
   "id": "/",
-  "name": "Zomello",
-  "short_name": "Zomello",
-  "description": "Your Zomello boards, from your PC",
+  "name": "TCI Boards",
+  "short_name": "TCI Boards",
+  "description": "Boards, tasks & planning for TCI Casing Specialties",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#12151b",
+  "background_color": "#0f1117",
   "theme_color": "#2580c3",
   "icons": [
     {

@@ -166,7 +166,7 @@ export function SettingsPage() {
               className="btn ghost sm"
               title="Put the found styles back into hiding (they can be found again)"
               onClick={async () => {
-                if (!(await ask("Hide the styles you've found? Zomello goes back to classic, and they can be found again the same way.", { okText: "Hide them" })))
+                if (!(await ask("Hide the styles you've found? TCI Boards goes back to classic, and they can be found again the same way.", { okText: "Hide them" })))
                   return;
                 updateSettings({ unlockedStyles: [], style: "classic", appIcon: "classic" });
                 useStore.getState().toast("Hidden again.");
@@ -188,7 +188,7 @@ export function SettingsPage() {
               ))}
             </div>
             <small className="muted">
-              {isMobileApp ? `The icon on this ${deviceWord}'s home screen.` : "The icon on Zomello's windows and in the tray while it runs."}
+              {isMobileApp ? `The icon on this ${deviceWord}'s home screen.` : "The icon on TCI Boards's windows and in the tray while it runs."}
             </small>
           </div>
         )}
@@ -203,7 +203,7 @@ export function SettingsPage() {
           <div className="swatches">
             <button
               className={`swatch none ${settings.accent === null ? "sel" : ""}`}
-              title={{ classic: "Zomello blue", bassdrop: "Bass Drop pink", partycat: "Party Cat teal", undead: "Undead slime green" }[settings.style] + " (default)"}
+              title={{ classic: "TCI Boards blue", bassdrop: "Bass Drop pink", partycat: "Party Cat teal", undead: "Undead slime green" }[settings.style] + " (default)"}
               style={{
                 background: {
                   classic: "linear-gradient(135deg, #2580c3, #4fb0ec)",
@@ -371,10 +371,10 @@ export function SettingsPage() {
         </label>
         <p className="muted small">
           {isMobileApp
-            ? `Set a reminder on any card (card → Reminder, or press and hold → Remind me). They arrive even when Zomello is closed; the daily summary counts your cards as they were when you last opened Zomello.`
-            : "Set a reminder on any card (card → Reminder, or right-click → Remind me). Notifications appear while Zomello is running."}
+            ? `Set a reminder on any card (card → Reminder, or press and hold → Remind me). They arrive even when TCI Boards is closed; the daily summary counts your cards as they were when you last opened TCI Boards.`
+            : "Set a reminder on any card (card → Reminder, or right-click → Remind me). Notifications appear while TCI Boards is running."}
         </p>
-        <button className="btn sm" onClick={() => void notify("Zomello", "Notifications are working.")}>
+        <button className="btn sm" onClick={() => void notify("TCI Boards", "Notifications are working.")}>
           Send a test notification
         </button>
       </section>
@@ -388,7 +388,7 @@ export function SettingsPage() {
           Read repeats in titles
         </label>
         <p className="muted small">
-          End a new task's title with a repeat and Zomello sets it: “Water plants every monday”, “Rent monthly on the 1st”, “Standup daily at 9:30 until Dec 20”.
+          End a new task's title with a repeat and TCI Boards sets it: “Water plants every monday”, “Rent monthly on the 1st”, “Standup daily at 9:30 until Dec 20”.
           Dates and times (“tomorrow 3pm”) are always read. Under the title, × keeps the words as typed.
         </p>
       </section>
@@ -437,7 +437,7 @@ export function SettingsPage() {
           {/* On a shared server a restore would replace other people's boards too. */}
           {!isServer && (
             <button className="btn" onClick={() => fileRef.current?.click()}>
-              <Upload size={14} /> Restore from Zomello JSON
+              <Upload size={14} /> Restore from TCI Boards JSON
             </button>
           )}
           <button className="btn" onClick={() => useStore.getState().setOverlay({ importOpen: true })}>
@@ -567,7 +567,7 @@ function LogRow() {
   const withLog = async (use: (text: string) => Promise<unknown>) => {
     const text = await readLog();
     if (!text) return toast("The log is empty: nothing has gone wrong on this device.");
-    await use(`Zomello ${__APP_VERSION__} log\n\n${text}`);
+    await use(`TCI Boards ${__APP_VERSION__} log\n\n${text}`);
   };
   return (
     <p className="muted small about-log">
@@ -613,7 +613,7 @@ function AboutPanel() {
   ];
   return (
     <section className="panel" id="set-about">
-      <h3>About Zomello</h3>
+      <h3>About TCI Boards</h3>
       <div className="about-row">
         {/* Bops along while the notes are right. */}
         <span key={bop} className={bop ? "about-logo bop" : "about-logo"}>
@@ -621,15 +621,15 @@ function AboutPanel() {
         </span>
         <div>
           <p>
-            <b>Zomello</b> {__APP_VERSION__}{" "}
+            <b>TCI Boards</b> {__APP_VERSION__}{" "}
             <button className="btn ghost sm" onClick={openWhatsNew}>
               What's new
             </button>
           </p>
-          <p className="muted small">Boards, tasks &amp; planning, kept on your own computer. Made by ZomBeatz Media.</p>
+          <p className="muted small">Boards, tasks &amp; planning for TCI Casing Specialties.</p>
           <p className="muted small">
-            Free and open source under the MIT license.{" "}
-            <a href="https://github.com/ZomBeatz/Zomello" onClick={(e) => (e.preventDefault(), void openExternal("https://github.com/ZomBeatz/Zomello"))}>
+            TCI's fork of Zomello by ZomBeatz Media — free and open source under the MIT license.{" "}
+            <a href="https://github.com/kasemeyer/Zomello" onClick={(e) => (e.preventDefault(), void openExternal("https://github.com/kasemeyer/Zomello"))}>
               See the code
             </a>
           </p>
@@ -670,7 +670,7 @@ function FeaturesPanel() {
         <Blocks size={15} /> Features
       </h3>
       <p className="muted small">
-        Choose how much Zomello shows. Turning something off only hides its buttons and menus: nothing is deleted, and a card that
+        Choose how much TCI Boards shows. Turning something off only hides its buttons and menus: nothing is deleted, and a card that
         already uses it still shows it.
       </p>
       <div className="seg feature-presets" role="group" aria-label="Feature presets">

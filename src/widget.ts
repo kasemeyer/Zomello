@@ -38,7 +38,7 @@ export function widgetData(data: AppData, now = new Date()) {
 
 export function installWidget(): () => void {
   const b = bridge();
-  // Only this device's own boards (not a Zomello Server opened in the app).
+  // Only this device's own boards (not a TCI Boards server opened in the app).
   if (!b?.updateWidget || isServer) return () => {};
   let timer: ReturnType<typeof setTimeout> | undefined;
   let last = "";

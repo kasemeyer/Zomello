@@ -1,5 +1,5 @@
 /**
- * Running on a phone or tablet: the page is served by Zomello on the computer (see remote.rs), which marks
+ * Running on a phone or tablet: the page is served by TCI Boards on the computer (see remote.rs), which marks
  * index.html with `__ZOMELLO_REMOTE__`. Data, live updates and files all go through its /api.
  */
 export const isRemote = typeof window !== "undefined" && "__ZOMELLO_REMOTE__" in window;

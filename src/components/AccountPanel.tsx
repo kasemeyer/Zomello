@@ -5,7 +5,7 @@ import { calendarLink, changePassword, loadData, logout, me, updateProfile } fro
 import { copyText } from "./Markdown";
 import { ask, InlineEdit } from "./ui";
 
-/** Zomello Server: your name, password, and signing out. */
+/** TCI Boards server: your name, password, and signing out. */
 export function AccountPanel() {
   const name = useStore((s) => s.data.settings.me);
   const [current, setCurrent] = useState("");
@@ -82,7 +82,7 @@ export function AccountPanel() {
   );
 }
 
-/** A private link your calendar app subscribes to, so your Zomello dates show there (see feed.rs). */
+/** A private link your calendar app subscribes to, so your TCI Boards dates show there (see feed.rs). */
 function CalendarLink() {
   const [on, setOn] = useState<boolean | null>(null);
   const [url, setUrl] = useState<string | null>(null);
@@ -100,7 +100,7 @@ function CalendarLink() {
     }
   };
   const off = async () => {
-    if (!(await ask("Turn off your calendar link? Calendars using it stop getting your Zomello dates.", { okText: "Turn off", danger: true }))) return;
+    if (!(await ask("Turn off your calendar link? Calendars using it stop getting your TCI Boards dates.", { okText: "Turn off", danger: true }))) return;
     await calendarLink.remove().catch(() => {});
     setUrl(null);
     setOn(false);

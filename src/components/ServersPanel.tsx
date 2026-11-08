@@ -7,7 +7,7 @@ import { ask, InlineEdit } from "./ui";
 import { deviceWord, isApplePhoneOrTablet, isMobileApp, openExternal } from "../storage";
 import { ensureLocalNetwork, goToPlace, LOCAL_NETWORK_HELP, placeFromInput, reachable } from "../places";
 
-/** Settings → Zomello Servers: add the servers you use (yours or other people's) and open them. */
+/** Settings → TCI Boards servers: add the servers you use (yours or other people's) and open them. */
 export function ServersPanel() {
   const servers = useStore((s) => s.data.settings.servers ?? NO_SERVERS);
   const [address, setAddress] = useState("");
@@ -39,7 +39,7 @@ export function ServersPanel() {
       const r = await checkServer(address);
       if (r.ok) add(r.url);
       else if (r.certProblem) setProblem(r);
-      else setError(r.error ?? "Couldn't reach a Zomello Server there.");
+      else setError(r.error ?? "Couldn't reach a TCI Boards server there.");
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -50,10 +50,10 @@ export function ServersPanel() {
   return (
     <section className="panel" id="set-servers">
       <h3>
-        <Server size={15} /> Zomello Servers
+        <Server size={15} /> TCI Boards servers
       </h3>
       <p className="muted small">
-        Your boards here stay on this device. You can also use boards on a Zomello Server, your own or one someone invited you to.
+        Your boards here stay on this device. You can also use boards on a TCI Boards server, your own or one someone invited you to.
         Each server opens in its own window, where you sign in with the account its owner gave you.
       </p>
 
@@ -189,8 +189,8 @@ export function ServersPanel() {
 }
 
 /**
- * Phone app: use the boards on your computer (the Zomello app there, with Phones & tablets turned on).
- * Encrypted only: the computer's https address, with its Zomello certificate installed on this phone.
+ * Phone app: use the boards on your computer (the TCI Boards app there, with Phones & tablets turned on).
+ * Encrypted only: the computer's https address, with its TCI Boards certificate installed on this phone.
  */
 function ComputerConnect() {
   const servers = useStore((s) => s.data.settings.servers ?? NO_SERVERS);
@@ -215,7 +215,7 @@ function ComputerConnect() {
         // Not trusted yet (or not there): the computer's setup page, opened in the browser, installs its certificate.
         if (/^http:\/\/[^/]+\/setup/i.test(link.trim())) setSetupPage(link.trim().split("#")[0]);
         setError(
-          `Couldn't reach your computer there over a secure connection. Check that Zomello is open on it with Phones & tablets turned on, that this ${deviceWord} is on the same Wi‑Fi, and that its Zomello certificate is installed on this ${deviceWord} (Settings → Phones & tablets on the computer shows how).`,
+          `Couldn't reach your computer there over a secure connection. Check that TCI Boards is open on it with Phones & tablets turned on, that this ${deviceWord} is on the same Wi‑Fi, and that its TCI Boards certificate is installed on this ${deviceWord} (Settings → Phones & tablets on the computer shows how).`,
         );
         return;
       }
@@ -238,8 +238,8 @@ function ComputerConnect() {
       if (perm !== "granted") perm = await qr.requestPermissions();
       if (perm !== "granted") return setError(
           isApplePhoneOrTablet
-            ? `Zomello needs the camera to scan the code. Allow it in the ${deviceWord}'s Settings → Zomello → Camera, or type the address instead.`
-            : `Zomello needs the camera to scan the code. Allow it in the ${deviceWord}'s Settings → Apps → Zomello → Permissions, or type the address instead.`,
+            ? `TCI Boards needs the camera to scan the code. Allow it in the ${deviceWord}'s Settings → TCI Boards → Camera, or type the address instead.`
+            : `TCI Boards needs the camera to scan the code. Allow it in the ${deviceWord}'s Settings → Apps → TCI Boards → Permissions, or type the address instead.`,
         );
       const { content } = await qr.scan({ windowed: false, formats: [qr.Format.QRCode] });
       if (!content) return;
@@ -266,7 +266,7 @@ function ComputerConnect() {
       ) : (
         <ol className="small computer-steps">
           <li>
-            On your computer, open Zomello → <b>Settings → Phones &amp; tablets</b>, turn it on, and install its certificate on this
+            On your computer, open TCI Boards → <b>Settings → Phones &amp; tablets</b>, turn it on, and install its certificate on this
             phone if you haven't (it shows how).
           </li>
           <li>
@@ -358,7 +358,7 @@ function BackupSettings() {
         Back up this {deviceWord}'s boards on my computer
       </label>
       <p className="muted small">
-        While they're connected, your computer keeps a copy (one a day, for two weeks). If you reinstall Zomello or get a new{" "}
+        While they're connected, your computer keeps a copy (one a day, for two weeks). If you reinstall TCI Boards or get a new{" "}
         {deviceWord}, pair it again and restore from the computer: <b>Settings → Phones &amp; tablets → Device backups</b>. Attached
         files come along too (a few at a time, while connected).
       </p>

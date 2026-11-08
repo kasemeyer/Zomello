@@ -1,7 +1,7 @@
 import type { AppData, Board, Card, ID, List } from "./types";
 
 /**
- * Talking to a Zomello Server (several people, accounts, shared boards). The server marks its page
+ * Talking to a TCI Boards server (several people, accounts, shared boards). The server marks its page
  * with `__ZOMELLO_SERVER__`. Instead of saving one big file, the app sends what changed (boards,
  * buckets, cards, and your own settings) and merges other people's changes as they happen.
  */

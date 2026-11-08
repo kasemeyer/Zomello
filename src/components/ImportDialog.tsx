@@ -22,7 +22,7 @@ export function ImportDialog() {
     setBusy(true);
     setError("");
     if (isBoardFile(f.name)) {
-      // A Zomello board file needs no preview: it opens as a new board as-is.
+      // A TCI Boards board file needs no preview: it opens as a new board as-is.
       close();
       return openBoardFile(new Uint8Array(await f.arrayBuffer()));
     }
@@ -74,7 +74,7 @@ export function ImportDialog() {
         >
           <FileUp size={28} />
           <b>{busy ? "Reading…" : "Choose or drop an export file"}</b>
-          <span className="muted small">Zomello board file · Trello .json · Planner .xlsx or .csv</span>
+          <span className="muted small">TCI Boards board file · Trello .json · Planner .xlsx or .csv</span>
           <input
             ref={fileRef}
             type="file"
@@ -115,7 +115,7 @@ export function ImportDialog() {
             {newPeople.length > 0 && (
               <label className="check-row">
                 <input type="checkbox" checked={addPeople} onChange={(e) => setAddPeople(e.target.checked)} />
-                Add {newPeople.length} {newPeople.length === 1 ? "person" : "people"} to Zomello ({newPeople.slice(0, 4).join(", ")}
+                Add {newPeople.length} {newPeople.length === 1 ? "person" : "people"} to TCI Boards ({newPeople.slice(0, 4).join(", ")}
                 {newPeople.length > 4 ? "…" : ""})
               </label>
             )}
@@ -138,7 +138,7 @@ export function ImportDialog() {
         <details className="import-help">
           <summary>How do I export from Trello or Planner?</summary>
           <p>
-            <b>Zomello:</b> on the board, <i>⋯</i> → <i>Save as board file</i>. Anyone with Zomello can open that file to get a copy of
+            <b>TCI Boards:</b> on the board, <i>⋯</i> → <i>Save as board file</i>. Anyone with TCI Boards can open that file to get a copy of
             the board, attachments included.
           </p>
           <p>

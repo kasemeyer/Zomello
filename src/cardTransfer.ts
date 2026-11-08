@@ -11,7 +11,7 @@ import type { ID } from "./types";
 import { isDeviceWindow } from "./windows";
 
 /**
- * Moving (or copying) cards to a board on another device: your computer, this phone, or a Zomello Server.
+ * Moving (or copying) cards to a board on another device: your computer, this phone, or a TCI Boards server.
  * The cards travel as a small board file (attached files included) the same way whole boards do (see
  * transfer.ts and phoneTransfer.ts), and join the chosen board there.
  */
@@ -62,7 +62,7 @@ export async function sendCards(cardIds: ID[], to: CardDestination, boardId: ID,
       const device = to.key.slice(4);
       for (const bytes of files) {
         const tid = await invoke<string>("linked_send_board", bytes, { headers: { "x-device": device } });
-        if (!(await received(tid, 45_000))) throw new Error(`${to.name} didn't answer. Check that Zomello is open on it and try again.`);
+        if (!(await received(tid, 45_000))) throw new Error(`${to.name} didn't answer. Check that TCI Boards is open on it and try again.`);
       }
       if (move) removeCards(cards.map((c) => c.id));
       return void useStore.getState().toast(`${move ? "Moved" : "Copied"} ${what} to ${board} on ${to.name}`, { key });

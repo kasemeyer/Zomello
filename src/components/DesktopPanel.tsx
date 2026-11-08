@@ -21,7 +21,7 @@ export function DesktopPanel() {
     try {
       await invoke("set_background_mode", { enabled: on });
       useStore.getState().updateSettings({ runInBackground: on });
-      if (on) useStore.getState().toast("Closing the window now keeps Zomello running in the tray");
+      if (on) useStore.getState().toast("Closing the window now keeps TCI Boards running in the tray");
     } catch (e) {
       setError(String(e));
     }
@@ -46,22 +46,22 @@ export function DesktopPanel() {
         <span>
           Keep running in the tray when I close the window
           <small className="muted">
-            Phones and tablets stay connected and reminders keep coming. Open or quit Zomello from its tray icon.
+            Phones and tablets stay connected and reminders keep coming. Open or quit TCI Boards from its tray icon.
           </small>
         </span>
       </label>
       {store ? (
         <p className="small muted">
-          <b>Start Zomello when I log in:</b>{" "}
+          <b>Start TCI Boards when I log in:</b>{" "}
           {/Macintosh/.test(navigator.userAgent)
-            ? "turn it on in macOS: System Settings → General → Login Items → + → Zomello."
-            : "turn it on in Windows: Settings → Apps → Startup → Zomello."}
+            ? "turn it on in macOS: System Settings → General → Login Items → + → TCI Boards."
+            : "turn it on in Windows: Settings → Apps → Startup → TCI Boards."}
         </p>
       ) : (
         <label className="check-row">
           <input type="checkbox" checked={!!autostart} disabled={autostart === null} onChange={(e) => void setLogin(e.target.checked)} />
           <span>
-            Start Zomello when I log in
+            Start TCI Boards when I log in
             <small className="muted">{bg ? "It starts quietly in the tray." : "Turn on the option above to have it start quietly in the tray."}</small>
           </span>
         </label>

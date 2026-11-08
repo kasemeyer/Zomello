@@ -375,7 +375,7 @@ async fn main() {
     };
     let users = db::user_count(&app.db.lock().unwrap()).unwrap_or(0);
     println!(
-        "Zomello Server {} on {}://{addr}  (data: {})",
+        "TCI Boards server {} on {}://{addr}  (data: {})",
         env!("CARGO_PKG_VERSION"),
         if tls_config.is_some() { "https" } else { "http" },
         data_dir.display()

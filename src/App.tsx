@@ -108,13 +108,13 @@ export default function App() {
   // Easter egg: a card called "Braaains" (watched in one window only, so it toasts once).
   useEffect(() => (loaded && !isExtraWindow ? watchForBraaains() : undefined), [loaded]);
 
-  // Android: text shared to Zomello from another app opens Quick add (wherever its boards are).
+  // Android: text shared to TCI Boards from another app opens Quick add (wherever its boards are).
   useEffect(() => {
     if (!loaded || isExtraWindow) return;
     return installShareIn();
   }, [loaded]);
 
-  // Zomello Server: other people's changes, your other tabs, sharing changes and invitations.
+  // TCI Boards server: other people's changes, your other tabs, sharing changes and invitations.
   useEffect(() => {
     if (!loaded || !isServer) return;
     const reload = () => void serverLoadData().then((json) => useStore.getState().reloadFromServer(json)).catch(() => {});
@@ -149,7 +149,7 @@ export default function App() {
 
   // Board windows are titled after their board.
   const windowTitle = useStore((s) =>
-    isBoardWindow && s.route.page === "board" ? `${s.data.boards[s.route.boardId]?.title ?? "Board"} · Zomello` : "Zomello",
+    isBoardWindow && s.route.page === "board" ? `${s.data.boards[s.route.boardId]?.title ?? "Board"} · TCI Boards` : "TCI Boards",
   );
   useEffect(() => {
     if (isBoardWindow) void setWindowTitle(windowTitle);
@@ -267,7 +267,7 @@ export default function App() {
     return (
       <div className="fatal">
         <h2>Couldn't read your data file</h2>
-        <p>Nothing was overwritten. Fix or move the file, then restart Zomello.</p>
+        <p>Nothing was overwritten. Fix or move the file, then restart TCI Boards.</p>
         <pre>{loadError}</pre>
       </div>
     );
@@ -340,7 +340,7 @@ function PhoneBar({ onMenu }: { onMenu: () => void }) {
       </button>
       <button className="phone-bar-home grow" onClick={() => useStore.getState().navigate({ page: "home" })} aria-label="Home">
         <LogoMark size={26} />
-        <span className="phone-bar-title">Zomello</span>
+        <span className="phone-bar-title">TCI Boards</span>
       </button>
       <button className="icon-btn" onClick={() => setSearchOpen(true)} aria-label="Search">
         <Search size={19} />
@@ -381,7 +381,7 @@ function HelpWindow() {
         </div>
         <div className="help-start">
           <div>
-            <b>Want to know everything Zomello can do?</b>
+            <b>Want to know everything TCI Boards can do?</b>
             <p className="muted small">The full guide: every feature step by step, with pictures and search.</p>
           </div>
           <button className="btn" onClick={() => void openExternal(GUIDE_URL)}>
@@ -391,7 +391,7 @@ function HelpWindow() {
         <div className="help-start">
           <div>
             <b>Found a problem, or have an idea?</b>
-            <p className="muted small">Send us an email. Your Zomello version and device are filled in for you.</p>
+            <p className="muted small">Send us an email. Your TCI Boards version and device are filled in for you.</p>
           </div>
           <button className="btn" onClick={() => void sendFeedback()}>
             <MessageSquare size={14} /> Send feedback
@@ -410,7 +410,7 @@ function HelpWindow() {
           <li>
             <b>Where is my data?</b>{" "}
             {isServer
-              ? "On this Zomello Server, saved as you type. Its admin keeps daily backups."
+              ? "On this TCI Boards server, saved as you type. Its admin keeps daily backups."
               : isRemote
                 ? "On your computer: this device works on the boards stored there."
                 : inTauri
@@ -426,14 +426,14 @@ function HelpWindow() {
               </>
             ) : (
               <>
-                Open the board's ⋯ menu → <i>Save as board file…</i> and send them the file. Opening it in their Zomello adds
-                their own copy, attachments included. To work on one board together, live, use a Zomello Server.
+                Open the board's ⋯ menu → <i>Save as board file…</i> and send them the file. Opening it in their TCI Boards adds
+                their own copy, attachments included. To work on one board together, live, use a TCI Boards server.
               </>
             )}
           </li>
           {!isServer && !isRemote && (
             <li>
-              <b>Use a Zomello Server?</b> Add it under Settings → Zomello Servers. It then shows in the sidebar; sign in with
+              <b>Use a TCI Boards server?</b> Add it under Settings → TCI Boards servers. It then shows in the sidebar; sign in with
               the account its owner made for you.
             </li>
           )}
@@ -445,7 +445,7 @@ function HelpWindow() {
                 ? "Settings → Phones & tablets walks you through it."
                 : isRemote
                   ? "You're on one now. To add it to your home screen: Chrome ⋮ → Install app, or Safari Share → Add to Home Screen."
-                  : "Install the Zomello app on it, or use a Zomello Server."}
+                  : "Install the TCI Boards app on it, or use a TCI Boards server."}
           </li>
           <li>
             <b>Select several cards?</b> Ctrl+click (or Shift+click) them, then use the bar that appears.
@@ -509,7 +509,7 @@ function DeviceOffline() {
       <Smartphone size={36} className="muted" />
       <h2>That device isn't connected right now</h2>
       <p className="muted">
-        Its boards show here while it's on the same Wi‑Fi as your computer, with Zomello open (and, from another phone or tablet,
+        Its boards show here while it's on the same Wi‑Fi as your computer, with TCI Boards open (and, from another phone or tablet,
         while it shares its boards). They stay on that device, so nothing is lost.
       </p>
       {isRemote ? (

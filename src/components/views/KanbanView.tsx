@@ -1035,7 +1035,7 @@ function BucketRulesDialog({ list, board, onClose }: { list: List; board: Board;
         </section>
         <section>
           <h4>When a card here is past its due date</h4>
-          <p className="muted small">Checked when Zomello opens and then every hour. Completed cards are left alone.</p>
+          <p className="muted small">Checked when TCI Boards opens and then every hour. Completed cards are left alone.</p>
           <label className="rule-row">
             <span>Move it to</span>
             <select value={list.lateMoveTo ?? ""} onChange={(e) => updateList(list.id, { lateMoveTo: e.target.value || null })}>

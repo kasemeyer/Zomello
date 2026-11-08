@@ -9,9 +9,9 @@ import { prettyDate, toISO, todayISO } from "./utils";
  * Notifications:
  *  - a card's own reminder (date + time), once;
  *  - a daily digest of what's late / due today, once a day at the chosen time.
- * On a computer Zomello checks every 30 seconds while it runs. Sent reminders are remembered per-device so
+ * On a computer TCI Boards checks every 30 seconds while it runs. Sent reminders are remembered per-device so
  * restarts don't repeat them. The phone and tablet app hands them to the system ahead of time instead (see
- * `scheduleOnPhone`), so they arrive while Zomello is closed.
+ * `scheduleOnPhone`), so they arrive while TCI Boards is closed.
  */
 const SENT_KEY = "zomello-reminders-sent";
 const CHECK_EVERY_MS = 30_000;
@@ -79,7 +79,7 @@ export function checkReminders() {
   if (r.digest && now.time >= r.digestTime && !sent.has(digestKey)) {
     sent.add(digestKey);
     const text = digestText(data, live, todayISO());
-    if (text) void notify("Zomello: your day", text);
+    if (text) void notify("TCI Boards: your day", text);
   }
   saveSent(sent);
 }
@@ -99,7 +99,7 @@ function notificationId(key: string): number {
 
 /**
  * Hand the coming reminders to the system: each card's reminder, and the daily digest for the next week (counted
- * from the cards as they are now; opening Zomello recounts). Everything scheduled before is replaced.
+ * from the cards as they are now; opening TCI Boards recounts). Everything scheduled before is replaced.
  */
 export async function scheduleOnPhone(data: AppData) {
   const n = await import("@tauri-apps/plugin-notification");
@@ -130,7 +130,7 @@ export async function scheduleOnPhone(data: AppData) {
         d.setHours(hh || 0, mm || 0, 0, 0);
         if (+d <= now) continue;
         const text = digestText(data, live, toISO(d));
-        if (text) plan.push({ key: `digest:${toISO(d)}`, at: d, title: "Zomello: your day", body: text });
+        if (text) plan.push({ key: `digest:${toISO(d)}`, at: d, title: "TCI Boards: your day", body: text });
       }
     }
   }
@@ -222,7 +222,7 @@ function safeJson(s: string): unknown {
   }
 }
 
-/** Listen for reminder actions: on Android through Zomello's own activity (so one that opened the app isn't missed), elsewhere the plugin. */
+/** Listen for reminder actions: on Android through TCI Boards's own activity (so one that opened the app isn't missed), elsewhere the plugin. */
 function installActions(): () => void {
   const android = (window as unknown as { ZomelloAndroid?: { takeNotificationAction?(): string | null } }).ZomelloAndroid;
   if (android?.takeNotificationAction) {

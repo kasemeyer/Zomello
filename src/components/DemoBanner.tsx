@@ -10,8 +10,8 @@ export function DemoBanner() {
       <button className="btn sm" onClick={resetDemo}>
         Reset demo
       </button>
-      <a className="btn sm primary" href="https://github.com/ZomBeatz/Zomello/releases/latest" target="_blank" rel="noreferrer">
-        Get Zomello
+      <a className="btn sm primary" href="https://github.com/kasemeyer/Zomello/releases/latest" target="_blank" rel="noreferrer">
+        Get TCI Boards
       </a>
     </div>
   );

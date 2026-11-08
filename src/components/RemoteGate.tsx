@@ -45,8 +45,8 @@ export function RemoteGate({ children }: { children: ReactNode }) {
     return (
       <div className="pair-screen">
         <WifiOff size={36} className="muted" />
-        <h2>Can't reach Zomello on your computer</h2>
-        <p className="muted">Make sure the computer is on, Zomello is open, and this device is on the same Wi‑Fi.</p>
+        <h2>Can't reach TCI Boards on your computer</h2>
+        <p className="muted">Make sure the computer is on, TCI Boards is open, and this device is on the same Wi‑Fi.</p>
         <button className="btn primary" onClick={() => (setGate("checking"), void check())}>
           Try again
         </button>
@@ -88,7 +88,7 @@ function PairForm({ onPaired }: { onPaired: () => void }) {
       }}
     >
       <LogoMark size={56} />
-      <h2>Connect this device to Zomello</h2>
+      <h2>Connect this device to TCI Boards</h2>
       <p className="muted">
         On your computer, open <b>Settings → Phones &amp; tablets</b> and choose <b>Pair a device</b>. Enter the code it shows.
       </p>
@@ -116,7 +116,7 @@ function PairForm({ onPaired }: { onPaired: () => void }) {
       <PhoneBoardsButton />
       {!window.isSecureContext && (
         <a className="muted small" href={`/setup${code ? `#pair=${code}` : ""}`}>
-          Want to install Zomello as an app? Set up a secure connection first.
+          Want to install TCI Boards as an app? Set up a secure connection first.
         </a>
       )}
     </form>
@@ -136,7 +136,7 @@ export function SecureBanner() {
   return (
     <div className="secure-banner">
       <span className="grow">
-        Chrome shows this as <b>Not secure</b>, and Zomello can't be installed as an app yet. One-time setup fixes both.
+        Chrome shows this as <b>Not secure</b>, and TCI Boards can't be installed as an app yet. One-time setup fixes both.
       </span>
       <a className="btn sm primary" href="/setup">
         Set up

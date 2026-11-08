@@ -1,7 +1,7 @@
 import { unzipSync, strFromU8 } from "fflate";
 import type { Priority, Progress } from "./types";
 
-/** A board in a neutral shape, ready to be turned into Zomello data by `importBoard`. */
+/** A board in a neutral shape, ready to be turned into TCI Boards data by `importBoard`. */
 export interface ImportedBoard {
   source: "Trello" | "Planner" | "Template";
   title: string;

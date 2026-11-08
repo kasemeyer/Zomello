@@ -14,7 +14,7 @@ import { presetFeatures, PRESETS, type Preset } from "../features";
 type Start = "explore" | "empty" | "import";
 
 /**
- * First-run guide: who you are, how Zomello is organized, the handful of things worth knowing on day
+ * First-run guide: who you are, how TCI Boards is organized, the handful of things worth knowing on day
  * one, and how to start. Shown once on a fresh install; Help → "Welcome guide" opens it again.
  */
 export function WelcomeGuide({ onClose }: { onClose: () => void }) {
@@ -69,10 +69,10 @@ export function WelcomeGuide({ onClose }: { onClose: () => void }) {
             <div className="welcome-hero">
               <LogoMark size={64} />
               <div>
-                <h2>{firstRun ? "Welcome to Zomello" : "Zomello in a minute"}</h2>
+                <h2>{firstRun ? "Welcome to TCI Boards" : "TCI Boards in a minute"}</h2>
                 <p className="muted">
                   {isServer
-                    ? "Boards like Trello and task details like Planner, on your own Zomello Server. Make your own boards, or work on boards people share with you."
+                    ? "Boards like Trello and task details like Planner, on your own TCI Boards server. Make your own boards, or work on boards people share with you."
                     : `Boards like Trello, task details like Planner, and everything stays on this ${isMobileApp ? "device" : "computer"}. No account needed.`}
                 </p>
               </div>
@@ -249,8 +249,8 @@ export function WelcomeGuide({ onClose }: { onClose: () => void }) {
                 </span>
               </label>
             </div>
-            <h3 className="welcome-sub">How much should Zomello show?</h3>
-            <div className="seg" role="group" aria-label="How much Zomello shows">
+            <h3 className="welcome-sub">How much should TCI Boards show?</h3>
+            <div className="seg" role="group" aria-label="How much TCI Boards shows">
               {(Object.keys(PRESETS) as Preset[]).map((p) => (
                 <button key={p} className={level === p ? "active" : ""} aria-pressed={level === p} onClick={() => setLevel(p)}>
                   {PRESETS[p].name}
@@ -260,8 +260,8 @@ export function WelcomeGuide({ onClose }: { onClose: () => void }) {
             <p className="muted small">{PRESETS[level].what}. Change it any time in Settings &gt; Features.</p>
             <p className="muted small">
               {isDesktopApp
-                ? "Extras when you want them, in Settings: use it on your phone or tablet, Zomello Servers, backups, AI helpers and more."
-                : "Extras when you want them are in Settings: Zomello Servers, backups, AI helpers and more."}
+                ? "Extras when you want them, in Settings: use it on your phone or tablet, TCI Boards servers, backups, AI helpers and more."
+                : "Extras when you want them are in Settings: TCI Boards servers, backups, AI helpers and more."}
             </p>
           </section>
         )}

@@ -96,7 +96,7 @@ export function Sidebar() {
       <div className="brand">
         <button
           className="logo-btn"
-          aria-label="Zomello: go to Home"
+          aria-label="TCI Boards: go to Home"
           title="Home"
           onClick={() => {
             // Remember where this burst of clicks started.
@@ -335,7 +335,7 @@ export function Sidebar() {
   );
 }
 
-/** Zomello Servers added in Settings: one click opens a server's window. */
+/** TCI Boards servers added in Settings: one click opens a server's window. */
 function ServerNav({ collapsed }: { collapsed: boolean }) {
   const servers = useStore((s) => s.data.settings.servers ?? NO_SERVERS);
   if (!servers.length) return null;
@@ -783,7 +783,7 @@ function NoSectionDrop() {
   );
 }
 
-/** Zomello Server: who's signed in, with account settings and sign-out. */
+/** TCI Boards server: who's signed in, with account settings and sign-out. */
 function AccountButton({ collapsed }: { collapsed: boolean }) {
   const name = useStore((s) => s.data.settings.me);
   return (

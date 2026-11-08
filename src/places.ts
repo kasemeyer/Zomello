@@ -3,7 +3,7 @@ import { deviceWord, isApplePhoneOrTablet, isMobileApp } from "./storage";
 
 /**
  * Phones and tablets: one app, several places for boards. "This phone" is the app's own boards; it can
- * also switch to the boards on your computer (Zomello's Phones & tablets access) or a Zomello Server.
+ * also switch to the boards on your computer (TCI Boards's Phones & tablets access) or a TCI Boards server.
  * Switching loads that place's page in the app window, over https only, and remembers it so the app
  * reopens there. Pages from another place get a way back to this phone's boards.
  */
@@ -75,8 +75,8 @@ export async function ensureLocalNetwork(): Promise<boolean> {
 export const saveSignIn = () => android()?.saveSignIn?.();
 
 export const LOCAL_NETWORK_HELP = isApplePhoneOrTablet
-  ? `Zomello needs permission to reach devices on your Wi‑Fi. Allow it in the ${deviceWord}'s Settings → Privacy & Security → Local Network → Zomello, then try again.`
-  : `Zomello needs permission to reach devices on your Wi‑Fi. Allow it in the ${deviceWord}'s Settings → Apps → Zomello → Permissions → Nearby devices (or Local network), then try again.`;
+  ? `TCI Boards needs permission to reach devices on your Wi‑Fi. Allow it in the ${deviceWord}'s Settings → Privacy & Security → Local Network → TCI Boards, then try again.`
+  : `TCI Boards needs permission to reach devices on your Wi‑Fi. Allow it in the ${deviceWord}'s Settings → Apps → TCI Boards → Permissions → Nearby devices (or Local network), then try again.`;
 
 /** Is the place there, with a certificate this phone trusts? (An opaque reply is enough to know.) */
 export async function reachable(origin: string, ms = 4000): Promise<boolean> {
@@ -161,7 +161,7 @@ export function takeAddRequest(): { kind: "board" | "section"; section: string |
   return { kind: kind === "section" ? "section" : "board", section };
 }
 
-/** On a computer's or server's page: are we inside the Zomello app (so there's a phone to go back to)? */
+/** On a computer's or server's page: are we inside the TCI Boards app (so there's a phone to go back to)? */
 export const inZomelloApp = () => !!read(HOME_KEY);
 
 /**

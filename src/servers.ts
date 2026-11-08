@@ -4,7 +4,7 @@ import { inTauri, isMobileApp, openExternal } from "./storage";
 import type { ServerEntry } from "./types";
 
 /**
- * Zomello Servers inside the app, Plex style. The desktop app opens each server in its own window
+ * TCI Boards servers inside the app, Plex style. The desktop app opens each server in its own window
  * (that server's web app, signed in with your account there); the phone and tablet apps and plain
  * browsers open it in the browser, where it can be installed as an app of its own.
  */
@@ -36,7 +36,7 @@ export interface FoundServer {
   version: string | null;
 }
 
-/** Zomello Servers announcing themselves on this network (the app only; a browser can't listen). */
+/** TCI Boards servers announcing themselves on this network (the app only; a browser can't listen). */
 export async function findServers(): Promise<FoundServer[]> {
   if (!inTauri) return [];
   return invoke<FoundServer[]>("find_servers");

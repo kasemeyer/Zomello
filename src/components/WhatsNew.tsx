@@ -6,7 +6,7 @@ import { openExternal } from "../storage";
 import { Modal } from "./ui";
 
 /**
- * "New in Zomello": a short note shown once after updating to a new version (a 0.x release), with the few
+ * "New in TCI Boards": a short note shown once after updating to a new version (a 0.x release), with the few
  * things worth trying. Update WHATS_NEW for each release; the full list is the guide's What's new page.
  */
 export const WHATS_NEW: { version: string; items: { icon: ReactNode; title: string; text: string; action?: { label: string; run: () => void } }[] } = {
@@ -59,7 +59,7 @@ export function WhatsNew() {
     <Modal onClose={close} width={520} className="whats-new">
       <header className="whats-new-head">
         <Sparkles size={20} />
-        <h2>New in Zomello {WHATS_NEW.version}</h2>
+        <h2>New in TCI Boards {WHATS_NEW.version}</h2>
       </header>
       <ul className="whats-new-list">
         {WHATS_NEW.items.map((it) => (

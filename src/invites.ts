@@ -4,7 +4,7 @@ import { useStore } from "./store";
 
 let primed = false;
 
-/** Zomello Server: board invitations waiting for you (shown on Home). */
+/** TCI Boards server: board invitations waiting for you (shown on Home). */
 export const useInvites = create<{ invites: Invite[]; refresh: () => Promise<void> }>((set, get) => ({
   invites: [],
   async refresh() {

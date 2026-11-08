@@ -34,7 +34,7 @@ export async function readClipboard(): Promise<string> {
 const progressByName = new Map(PROGRESS.map((p) => [p.name.toLowerCase(), p.id]));
 const priorityByName = new Map(PRIORITIES.map((p) => [p.name.toLowerCase(), p.id]));
 
-/** Cards copied from Zomello ("### Title" headings with a details line under each). */
+/** Cards copied from TCI Boards ("### Title" headings with a details line under each). */
 function parseCopiedCards(text: string): AiCard[] {
   const cards: AiCard[] = [];
   let card: AiCard | null = null;
@@ -104,7 +104,7 @@ function parseCopiedCards(text: string): AiCard[] {
   return cards;
 }
 
-/** Cards in pasted text: copied from Zomello, an AI reply, or a plain list. */
+/** Cards in pasted text: copied from TCI Boards, an AI reply, or a plain list. */
 export function parsePastedCards(text: string): AiCard[] {
   if (/^###\s/m.test(text)) {
     const copied = parseCopiedCards(text);

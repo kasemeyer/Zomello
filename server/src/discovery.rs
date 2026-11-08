@@ -17,7 +17,7 @@ pub fn announce(name: Option<String>, port: u16, https: bool, setting: Option<St
         _ => {}
     }
     let host = hostname();
-    let name = name.unwrap_or_else(|| format!("Zomello on {host}"));
+    let name = name.unwrap_or_else(|| format!("TCI Boards on {host}"));
     let daemon = mdns_sd::ServiceDaemon::new().map_err(|e| eprintln!("Network discovery is off: {e}")).ok()?;
     let props = [("name", name.as_str()), ("scheme", if https { "https" } else { "http" }), ("version", env!("CARGO_PKG_VERSION"))];
     // An empty address list plus enable_addr_auto: the library announces this computer's addresses

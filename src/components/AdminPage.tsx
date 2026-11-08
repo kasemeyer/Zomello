@@ -15,12 +15,12 @@ let publicUrl: string | null = null;
 function signInDetails(name: string, username: string, password: string) {
   const address = publicUrl || location.origin;
   return [
-    `Zomello sign-in for ${name}`,
+    `TCI Boards sign-in for ${name}`,
     `Address: ${address}`,
     `Username: ${username}`,
     `Password: ${password}`,
     "",
-    `Open the address in a browser (on a phone you can then install it as an app), or in the Zomello app: Settings → Zomello Servers → add ${address}.`,
+    `Open the address in a browser (on a phone you can then install it as an app), or in the TCI Boards app: Settings → TCI Boards servers → add ${address}.`,
     "You can change your password in Settings once you're in.",
   ].join("\n");
 }
@@ -32,7 +32,7 @@ function tempPassword() {
   return `${pick()}-${pick()}-${1000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 9000)}`;
 }
 
-/** Zomello Server: manage people and boards (admins only). */
+/** TCI Boards server: manage people and boards (admins only). */
 export function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [boards, setBoards] = useState<AdminBoard[]>([]);
@@ -100,7 +100,7 @@ export function AdminPage() {
             <span>
               <b>{bytes(info.dbBytes + info.attachmentBytes)}</b> stored
             </span>
-            <span className="muted">Zomello Server {info.version}</span>
+            <span className="muted">TCI Boards server {info.version}</span>
           </div>
           <p className="muted small">
             Everything lives in <code>{info.dataDir}</code> (the database plus attached files). A copy of the database is kept

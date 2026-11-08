@@ -70,7 +70,7 @@ export function DeviceBackups() {
       for (const b of boards) {
         const { bytes } = await buildBoardFile(data, b.id, undefined, readFile);
         const tid = await invoke<string>("linked_send_board", bytes, { headers: { "x-device": to.id } });
-        if (!(await received(tid, 45_000))) throw new Error(`${to.name} didn't answer. Check that Zomello is open on it and try again.`);
+        if (!(await received(tid, 45_000))) throw new Error(`${to.name} didn't answer. Check that TCI Boards is open on it and try again.`);
       }
       if (locked) await invoke("linked_send_private", { id: to.id, blob: locked });
       toast(
@@ -163,7 +163,7 @@ export function DeviceBackups() {
                         </button>
                       ))
                     ) : (
-                      <p className="muted small">No phone or tablet is connected right now. Open Zomello on it (paired, on the same Wi‑Fi).</p>
+                      <p className="muted small">No phone or tablet is connected right now. Open TCI Boards on it (paired, on the same Wi‑Fi).</p>
                     )}
                   </div>
                 )}

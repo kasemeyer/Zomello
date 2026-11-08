@@ -14,7 +14,7 @@ import { isRemote } from "../remote";
 const otherDevices = isRemote;
 
 /**
- * Desktop app: phones connected right now (same Wi‑Fi, Zomello open), each with its boards. Clicking
+ * Desktop app: phones connected right now (same Wi‑Fi, TCI Boards open), each with its boards. Clicking
  * one opens it in a window that edits the phone's board directly. A phone that goes away disappears
  * from here. Hide a phone's boards in Settings → Phones & tablets.
  */
