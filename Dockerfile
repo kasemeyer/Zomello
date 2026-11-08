@@ -36,7 +36,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
     && useradd --uid 65532 --user-group nonroot
 COPY --from=server /out/zomello-server /usr/local/bin/zomello-server
 COPY --from=litestream /usr/local/bin/litestream /usr/local/bin/litestream
-COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+# (a plain COPY + chmod, not COPY --chmod: Azure Container Registry builds without BuildKit)
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
 COPY --from=server --chown=nonroot:nonroot /out/data /data
 ENV ZOMELLO_DATA=/data ZOMELLO_PORT=7311
 USER nonroot
