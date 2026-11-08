@@ -60,7 +60,7 @@ const VIEWS: { id: ViewMode; name: string; icon: React.ReactNode }[] = [
   { id: "charts", name: "Charts", icon: <BarChart3 size={15} /> },
 ];
 const GROUPS: { id: GroupBy; name: string }[] = [
-  { id: "bucket", name: "Bucket" },
+  { id: "bucket", name: "List" },
   { id: "progress", name: "Progress" },
   { id: "priority", name: "Priority" },
   { id: "assignee", name: "Assigned to" },
@@ -960,12 +960,12 @@ function SelectionBar({ boardId }: { boardId: ID }) {
             </MenuItem>
             {(automation || picked.some((c) => c.skipRules)) &&
               (picked.every((c) => c.skipRules) ? (
-                <MenuItem icon={<Zap size={14} />} onClick={() => (each(() => ({ skipRules: undefined }), "Bucket rules apply again to"), close())}>
-                  Follow bucket rules
+                <MenuItem icon={<Zap size={14} />} onClick={() => (each(() => ({ skipRules: undefined }), "List rules apply again to"), close())}>
+                  Follow list rules
                 </MenuItem>
               ) : (
-                <MenuItem icon={<ZapOff size={14} />} onClick={() => (each((c) => (c.skipRules ? null : { skipRules: true }), "Bucket rules now skip"), close())}>
-                  Skip bucket rules
+                <MenuItem icon={<ZapOff size={14} />} onClick={() => (each((c) => (c.skipRules ? null : { skipRules: true }), "List rules now skip"), close())}>
+                  Skip list rules
                 </MenuItem>
               ))}
             <MenuItem

@@ -408,7 +408,7 @@ function Column({
         {list && hasRules(list) && (
           <button
             className="rules-chip"
-            aria-label="Bucket rules"
+            aria-label="List rules"
             title={rulesSummary(list, allLists, templates)}
             onClick={() => setRulesOpen(true)}
             onPointerDown={(e) => e.stopPropagation()}
@@ -433,7 +433,7 @@ function Column({
           <Popover
             align="right"
             trigger={(_, toggle) => (
-              <button className="icon-btn" title="Bucket menu" aria-label="Bucket menu" onClick={toggle} onPointerDown={(e) => e.stopPropagation()}>
+              <button className="icon-btn" title="List menu" aria-label="List menu" onClick={toggle} onPointerDown={(e) => e.stopPropagation()}>
                 <MoreHorizontal size={16} />
               </button>
             )}
@@ -461,14 +461,14 @@ function Column({
                         useStore.getState().setOverlay({ aiDialog: { tab: "export", boardId: board.id, listId: list.id } });
                       }}
                     >
-                      Export bucket for AI…
+                      Export list for AI…
                     </MenuItem>
                     <MenuItem
                       icon={<ClipboardCopy size={14} />}
                       onClick={() => {
                         close();
                         const cs = Object.values(useStore.getState().data.cards).filter((c) => c.listId === list.id);
-                        copyText(workOrder(board.id, cs, `Bucket: ${list.title}`));
+                        copyText(workOrder(board.id, cs, `List: ${list.title}`));
                       }}
                     >
                       Copy work order
@@ -495,7 +495,7 @@ function Column({
                 </MenuItem>
                 {(automation || hasRules(list)) && (
                   <MenuItem icon={<Wand2 size={14} />} onClick={() => (setRulesOpen(true), close())}>
-                    Bucket rules{hasRules(list) ? " (on)" : ""}…
+                    List rules{hasRules(list) ? " (on)" : ""}…
                   </MenuItem>
                 )}
                 {(looks || !!list.badges) && (
@@ -521,7 +521,7 @@ function Column({
                 </label>
                 )}
                 <MenuItem icon={<Archive size={14} />} onClick={() => (archiveList(list), close())}>
-                  Archive bucket
+                  Archive list
                 </MenuItem>
                 <MenuItem
                   danger
@@ -531,7 +531,7 @@ function Column({
                     void deleteListAction(list);
                   }}
                 >
-                  Delete bucket
+                  Delete list
                 </MenuItem>
               </div>
             )}
@@ -610,7 +610,7 @@ function SortMenu({ list, lists, children }: { list: List; lists: List[]; childr
             }}
           >
             <span className="ctx-icon" />
-            <span>Use this sort for every bucket on the board</span>
+            <span>Use this sort for every list on the board</span>
           </button>
           <p className="muted small sort-note">
             Sorting only changes how cards are shown. Your custom order is kept and comes back when you pick Custom order.
@@ -779,7 +779,7 @@ function AddList({ boardId }: { boardId: ID }) {
   if (!open)
     return (
       <button className="add-list-btn" onClick={() => setOpen(true)}>
-        <Plus size={16} /> Add bucket
+        <Plus size={16} /> Add list
       </button>
     );
   const submit = () => {
@@ -790,7 +790,7 @@ function AddList({ boardId }: { boardId: ID }) {
     <div className="column add-list-form">
       <input
         autoFocus
-        placeholder="Bucket name"
+        placeholder="List name"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={(e) => {
@@ -841,7 +841,7 @@ const appliesToCardsHere = (l: List) =>
 
 /** What a bucket's rules do, one line each, for the tooltip on its header. */
 function rulesSummary(l: List, lists: Record<ID, List>, templates: { id: ID; name: string }[]): string {
-  const to = (id?: ID | null) => (id && lists[id]?.title) || "another bucket";
+  const to = (id?: ID | null) => (id && lists[id]?.title) || "another list";
   const n = (x?: unknown[]) => x?.length ?? 0;
   const lines = [
     l.newTemplateId && `New cards start from "${templates.find((t) => t.id === l.newTemplateId)?.name ?? "a template"}"`,
@@ -858,7 +858,7 @@ function rulesSummary(l: List, lists: Record<ID, List>, templates: { id: ID; nam
       `Late cards ${[l.lateMoveTo && `move to ${to(l.lateMoveTo)}`, l.latePriority && `get ${PRIORITIES.find((p) => p.id === l.latePriority)?.name ?? ""} priority`].filter(Boolean).join(" and ")}`,
     l.archiveAfterDays != null && `Completed cards are archived after ${l.archiveAfterDays === 1 ? "a day" : `${l.archiveAfterDays} days`}`,
   ].filter(Boolean);
-  return `Bucket rules (click to change):\n${lines.map((x) => `• ${x}`).join("\n")}`;
+  return `List rules (click to change):\n${lines.map((x) => `• ${x}`).join("\n")}`;
 }
 
 /** Every rule switched off (for "Turn off all rules"). */
@@ -916,7 +916,7 @@ function BucketRulesDialog({ list, board, onClose }: { list: List; board: Board;
   const applyHere = () => {
     const { applyBucketRules, toast } = useStore.getState();
     const n = applyBucketRules(list.id);
-    toast(n ? `Bucket rules changed ${n} card${n === 1 ? "" : "s"}` : "Those cards already follow these rules", { undo: n > 0 });
+    toast(n ? `List rules changed ${n} card${n === 1 ? "" : "s"}` : "Those cards already follow these rules", { undo: n > 0 });
   };
   return (
     <Modal onClose={onClose} width={520} className="customize">
@@ -1115,7 +1115,7 @@ function BucketDisplayDialog({ list, board, onClose }: { list: List; board: Boar
       </header>
       <div className="customize-body">
         <p className="muted small">
-          Overrides the board's settings for cards in this bucket only. “Board” follows the board (currently shown in brackets).
+          Overrides the board's settings for cards in this list only. “Board” follows the board (currently shown in brackets).
         </p>
         <div className="badge-modes">
           {BADGES.map((b) => {

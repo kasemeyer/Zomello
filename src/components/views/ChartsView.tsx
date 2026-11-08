@@ -93,7 +93,7 @@ export function ChartsView({ lists, cards, people }: { lists: List[]; cards: Car
       <TimePanel lists={lists} cards={cards} />
 
       <div className="panel-grid">
-        <Panel title="By bucket" rows={lists.map((l) => ({ label: l.title, cards: cards.filter((c) => c.listId === l.id) }))} />
+        <Panel title="By list" rows={lists.map((l) => ({ label: l.title, cards: cards.filter((c) => c.listId === l.id) }))} />
         <Panel title="By priority" rows={PRIORITIES.map((p) => ({ label: p.name, cards: cards.filter((c) => c.priority === p.id) }))} />
         <Panel
           title="By assignee"
@@ -138,7 +138,7 @@ function TimePanel({ lists, cards }: { lists: List[]; cards: Card[] }) {
       </h3>
       <div className="panel-grid">
         <div>
-          <h4>By bucket</h4>
+          <h4>By list</h4>
           {byList.map((r) => <Bar key={r.label} label={r.label} ms={r.ms} />)}
         </div>
         <div>

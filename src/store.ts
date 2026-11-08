@@ -263,14 +263,14 @@ function sampleData(): AppData {
     }),
     newCard(board.id, todo.id, "Drag me to In progress", 1, {
       description:
-        "Drag cards between buckets (and buckets by their title). Dropping a card in **In progress** or **Done** updates its progress for you. Each bucket's ⋯ menu decides what it does.",
+        "Drag cards between lists (and lists by their title). Dropping a card in **In progress** or **Done** updates its progress for you. Each list's ⋯ menu decides what it does.",
       dueDate: d(2),
       priority: "important",
     }),
     newCard(board.id, todo.id, isPhoneOrTablet ? "Press and hold me" : "Right-click me", 2, {
       description: isPhoneOrTablet
-        ? "Cards, buckets and boards all have a menu with their options: press and hold them. (On a computer, right-click.)"
-        : "Cards, buckets and boards all have a right-click menu with their options. On a phone or tablet, press and hold instead.",
+        ? "Cards, lists and boards all have a menu with their options: press and hold them. (On a computer, right-click.)"
+        : "Cards, lists and boards all have a right-click menu with their options. On a phone or tablet, press and hold instead.",
       labelIds: [design.id],
     }),
     newCard(board.id, todo.id, isPhoneOrTablet ? "Tap + to add a task from anywhere" : "Press N to add a task from anywhere", 3, {

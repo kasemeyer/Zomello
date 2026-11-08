@@ -57,7 +57,7 @@ export function BoardTemplates() {
                       </button>
                     </span>
                     <span className="muted small">
-                      {t.about || `${t.lists.length} ${t.lists.length === 1 ? "bucket" : "buckets"}, ${cards} ${cards === 1 ? "card" : "cards"}`}
+                      {t.about || `${t.lists.length} ${t.lists.length === 1 ? "list" : "lists"}, ${cards} ${cards === 1 ? "card" : "cards"}`}
                     </span>
                     {buckets(t)}
                     <button className="btn sm" onClick={() => use(t)}>

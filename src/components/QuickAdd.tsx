@@ -81,7 +81,7 @@ export function QuickAdd() {
             </select>
           </label>
           <label>
-            Bucket
+            List
             <select value={effectiveList} onChange={(e) => setListId(e.target.value)}>
               {lists.map((l) => (
                 <option key={l.id} value={l.id}>

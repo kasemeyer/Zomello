@@ -72,7 +72,7 @@ export function ListView({ board, lists, cards }: { board: Board; lists: List[];
           <tr>
             <th style={{ width: 36 }} />
             <Th k="title">Task</Th>
-            <Th k="bucket" w={140}>Bucket</Th>
+            <Th k="bucket" w={140}>List</Th>
             <Th k="progress" w={130}>Progress</Th>
             <Th k="priority" w={120}>Priority</Th>
             <Th k="start" w={100}>Start</Th>

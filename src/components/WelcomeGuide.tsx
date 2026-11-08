@@ -110,14 +110,14 @@ export function WelcomeGuide({ onClose }: { onClose: () => void }) {
             <dl className="welcome-terms">
               <dt>Board</dt>
               <dd>A project or an area of life: “Home”, “Work”, “Garage build”.</dd>
-              <dt>Bucket</dt>
+              <dt>List</dt>
               <dd>A column on the board, usually a stage: To do, In progress, Done.</dd>
               <dt>Card</dt>
               <dd>One task. Open it for a checklist, dates, people, files, notes and more.</dd>
             </dl>
             <p className="muted small">
               Moving a card into <b>In progress</b> or <b>Done</b> updates it for you. When you complete a card in any other
-              bucket, it tucks away under <b>Show completed</b> at the bottom of that bucket.
+              list, it tucks away under <b>Show completed</b> at the bottom of that list.
             </p>
           </section>
         )}
@@ -143,7 +143,7 @@ export function WelcomeGuide({ onClose }: { onClose: () => void }) {
               <li>
                 <Move size={18} />
                 <span>
-                  <b>Drag</b> cards between buckets, and buckets by their title.{isPhoneOrTablet ? " Swipe sideways to see the next bucket." : ""}
+                  <b>Drag</b> cards between lists, and lists by their title.{isPhoneOrTablet ? " Swipe sideways to see the next list." : ""}
                 </span>
               </li>
               <li>
@@ -151,11 +151,11 @@ export function WelcomeGuide({ onClose }: { onClose: () => void }) {
                 <span>
                   {isPhoneOrTablet ? (
                     <>
-                      <b>Press and hold</b> cards, buckets and boards for their options.
+                      <b>Press and hold</b> cards, lists and boards for their options.
                     </>
                   ) : (
                     <>
-                      <b>Right-click</b> cards, buckets and boards for their options. On a phone or tablet, press and hold.
+                      <b>Right-click</b> cards, lists and boards for their options. On a phone or tablet, press and hold.
                     </>
                   )}
                 </span>
@@ -312,7 +312,7 @@ function MiniBoard() {
           <div key={c.title} className="mini-col">
             <div className="mini-col-title">
               {c.title}
-              {i === 0 && <span className="mini-tag">Bucket</span>}
+              {i === 0 && <span className="mini-tag">List</span>}
             </div>
             {Array.from({ length: c.cards }, (_, j) => (
               <div key={j} className={`mini-card ${i === 2 ? "done" : ""}`}>

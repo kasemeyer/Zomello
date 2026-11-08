@@ -328,7 +328,7 @@ function cardMenu(cardId: ID): MenuEntry[] {
     },
     { separator: true },
     {
-      label: "Move to bucket",
+      label: "Move to list",
       icon: <ArrowRightLeft size={14} />,
       submenu: lists.map((l) => ({
         label: l.title,
@@ -353,7 +353,7 @@ function cardMenu(cardId: ID): MenuEntry[] {
               ),
               submenu: bl.length
                 ? bl.map((l) => ({ label: l.title, onClick: () => useStore.getState().moveCardToBoard(cardId, b.id, l.id) }))
-                : [{ label: <span className="muted">No buckets</span> }],
+                : [{ label: <span className="muted">No lists</span> }],
             };
           })
         : [{ label: <span className="muted">No other boards</span> }],
@@ -410,7 +410,7 @@ function cardMenu(cardId: ID): MenuEntry[] {
         ]
       : []),
     {
-      label: "Skip bucket rules",
+      label: "Skip list rules",
       icon: <ZapOff size={14} />,
       checked: !!card.skipRules,
       feature: "automation",

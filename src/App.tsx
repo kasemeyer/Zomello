@@ -367,7 +367,7 @@ function HelpWindow() {
         <div className="help-start">
           <div>
             <b>New here, or need a refresher?</b>
-            <p className="muted small">A one-minute tour of boards, buckets, cards and the essentials.</p>
+            <p className="muted small">A one-minute tour of boards, lists, cards and the essentials.</p>
           </div>
           <button
             className="btn primary"
@@ -400,8 +400,8 @@ function HelpWindow() {
         <h3 className="help-h">Good to know</h3>
         <ul className="help-faq">
           <li>
-            <b>Where did my completed card go?</b> It's tucked under <i>Show completed</i> at the bottom of its bucket. Buckets
-            set to complete their cards (like Done) show them instead; change that from the bucket's ⋯ menu.
+            <b>Where did my completed card go?</b> It's tucked under <i>Show completed</i> at the bottom of its list. Lists
+            set to complete their cards (like Done) show them instead; change that from the list's ⋯ menu.
           </li>
           <li>
             <b>Deleted something by mistake?</b> Press Ctrl+Z, or Undo on the message that pops up. Archived things are under

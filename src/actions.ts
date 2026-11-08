@@ -32,7 +32,7 @@ export function archiveBoard(board: Board) {
 export async function deleteList(list: List) {
   const n = cardsIn((c) => c.listId === list.id);
   const what = n ? ` and its ${plural(n, "card")}` : "";
-  if (!(await ask(`Delete the bucket “${list.title}”${what}? You can undo this right after.`, { okText: "Delete bucket", danger: true })))
+  if (!(await ask(`Delete the list “${list.title}”${what}? You can undo this right after.`, { okText: "Delete list", danger: true })))
     return;
   const st = useStore.getState();
   st.deleteList(list.id);

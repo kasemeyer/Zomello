@@ -26,7 +26,7 @@ export function ArchivePage() {
         {(
           [
             ["cards", `Cards (${cards.length})`],
-            ["lists", `Buckets (${lists.length})`],
+            ["lists", `Lists (${lists.length})`],
             ["boards", `Boards (${boards.length})`],
           ] as [Tab, string][]
         ).map(([id, name]) => (

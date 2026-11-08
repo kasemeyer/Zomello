@@ -101,7 +101,7 @@ export function ImportDialog() {
               <input value={title} onChange={(e) => setTitle(e.target.value)} />
             </label>
             <p>
-              From <b>{board.source}</b>: {stats.lists} buckets, {stats.cards} cards, {stats.labels} labels
+              From <b>{board.source}</b>: {stats.lists} lists, {stats.cards} cards, {stats.labels} labels
               {stats.people ? `, ${stats.people} people` : ""}.
             </p>
             <ul className="import-lists">

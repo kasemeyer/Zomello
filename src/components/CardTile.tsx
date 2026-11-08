@@ -272,7 +272,7 @@ export const CardTile = memo(function CardTile({
         )}
         {bucketName && <span className="badge subtle">{bucketName}</span>}
         {card.skipRules && (
-          <span className="badge icon-only" title="Skips bucket rules" aria-label="Skips bucket rules">
+          <span className="badge icon-only" title="Skips list rules" aria-label="Skips list rules">
             <ZapOff size={12} />
           </span>
         )}

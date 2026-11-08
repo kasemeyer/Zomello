@@ -112,7 +112,7 @@ function AskTab({ init, onNext }: { init: AiDialogState; onNext: () => void }) {
     <>
       <div className="seg">
         <button className={mode === "cards" ? "active" : ""} onClick={() => setMode("cards")} disabled={!boards.length}>
-          Add cards to a bucket
+          Add cards to a list
         </button>
         <button className={mode === "board" ? "active" : ""} onClick={() => setMode("board")}>
           Build a new board
@@ -131,7 +131,7 @@ function AskTab({ init, onNext }: { init: AiDialogState; onNext: () => void }) {
             </select>
           </label>
           <label className="field grow">
-            <span className="cf-name">Bucket</span>
+            <span className="cf-name">List</span>
             <select value={effList} onChange={(e) => setListId(e.target.value)}>
               {lists.map((l) => (
                 <option key={l.id} value={l.id}>
@@ -186,7 +186,7 @@ function ExportTab({ init, onNext }: { init: AiDialogState; onNext: () => void }
 
   const scopeName =
     scope === "list"
-      ? `Bucket: ${data.lists[effList ?? ""]?.title ?? ""}`
+      ? `List: ${data.lists[effList ?? ""]?.title ?? ""}`
       : scope === "cards"
         ? cards.length === 1
           ? `Card: ${cards[0].title}`
@@ -220,14 +220,14 @@ function ExportTab({ init, onNext }: { init: AiDialogState; onNext: () => void }
           <span className="cf-name">What to export</span>
           <select value={scope} onChange={(e) => setScope(e.target.value as Scope)}>
             <option value="board">The whole board</option>
-            <option value="list">One bucket</option>
+            <option value="list">One list</option>
             <option value="filtered">Cards matching the board's current filter</option>
             {init.cardIds?.length ? <option value="cards">The selected card{init.cardIds.length > 1 ? "s" : ""}</option> : null}
           </select>
         </label>
         {scope === "list" && (
           <label className="field grow">
-            <span className="cf-name">Bucket</span>
+            <span className="cf-name">List</span>
             <select value={effList} onChange={(e) => setListId(e.target.value)}>
               {lists.map((l) => (
                 <option key={l.id} value={l.id}>
@@ -325,10 +325,10 @@ function ApplyTab({ init, onDone }: { init: AiDialogState; onDone: () => void })
           <ul>
             {sum.board && (
               <li>
-                Create a new board “{sum.board.title}” with {sum.board.buckets} buckets and {sum.board.cards} cards
+                Create a new board “{sum.board.title}” with {sum.board.buckets} lists and {sum.board.cards} cards
               </li>
             )}
-            {sum.cards > 0 && <li>Add {sum.cards} card{sum.cards === 1 ? "" : "s"} (sub-tasks included) to the bucket below</li>}
+            {sum.cards > 0 && <li>Add {sum.cards} card{sum.cards === 1 ? "" : "s"} (sub-tasks included) to the list below</li>}
             {sum.updates > 0 && <li>Update {sum.updates} existing card{sum.updates === 1 ? "" : "s"} on the board below</li>}
             {!sum.board && !sum.cards && !sum.updates && <li>No cards or updates were found.</li>}
           </ul>

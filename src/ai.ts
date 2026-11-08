@@ -241,7 +241,7 @@ export function exportMarkdown(
       n++;
       const meta = [
         `id: ${shortId(c.id)}`,
-        opts.numbered && `bucket: ${data.lists[c.listId]?.title}`,
+        opts.numbered && `list: ${data.lists[c.listId]?.title}`,
         PROGRESS.find((p) => p.id === c.progress)!.name,
         `priority: ${PRIORITIES.find((p) => p.id === c.priority)!.name}`,
         c.startDate && `start ${c.startDate}`,
@@ -456,7 +456,7 @@ export function applyReply(r: AiReply, target: { boardId: ID | null; listId: ID 
   }
 
   if (r.cards?.length) {
-    if (!target.listId) throw new Error("Pick a bucket for the new cards.");
+    if (!target.listId) throw new Error("Pick a list for the new cards.");
     for (const c of r.cards) res.created += createAiCard(target.listId, c)[1];
   }
 

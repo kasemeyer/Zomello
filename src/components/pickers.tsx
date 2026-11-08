@@ -225,7 +225,7 @@ export function BucketPicker({
             </option>
           ))}
       </select>
-      <label>Bucket</label>
+      <label>List</label>
       <select value={effectiveList} onChange={(e) => setListId(e.target.value)}>
         {boardLists.map((l) => (
           <option key={l.id} value={l.id}>

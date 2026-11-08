@@ -26,8 +26,8 @@ export const WHATS_NEW: { version: string; items: { icon: ReactNode; title: stri
     },
     {
       icon: <Zap size={18} />,
-      title: "Buckets that do the busywork",
-      text: "Bucket rules can now start cards from a template, assign people, set due dates, act on finished checklists and late cards, and tidy up done cards. Find them in a bucket's ⋯ menu.",
+      title: "Lists that do the busywork",
+      text: "List rules can now start cards from a template, assign people, set due dates, act on finished checklists and late cards, and tidy up done cards. Find them in a list's ⋯ menu.",
     },
     {
       icon: <Network size={18} />,

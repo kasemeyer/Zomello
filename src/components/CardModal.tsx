@@ -428,7 +428,7 @@ function CardDetail({ card, onClose }: { card: Card; onClose: () => void }) {
         </div>
 
         <aside className="detail-side">
-          <Field label="Bucket">
+          <Field label="List">
             <select value={card.listId} onChange={(e) => set({ listId: e.target.value })}>
               {lists.map((l) => (
                 <option key={l.id} value={l.id}>
@@ -494,11 +494,11 @@ function CardDetail({ card, onClose }: { card: Card; onClose: () => void }) {
           <Field label="Cover" hidden={!show("cover")}>
             <CoverEditor card={card} />
           </Field>
-          <Field label="Bucket rules" hidden={!featureOn({ features }, "automation") && !card.skipRules}>
+          <Field label="List rules" hidden={!featureOn({ features }, "automation") && !card.skipRules}>
             <div>
               <label className="check-row" title="Moving this card, ticking its checklist and Tidy up won't change it">
                 <input type="checkbox" checked={!!card.skipRules} onChange={(e) => set({ skipRules: e.target.checked || undefined })} />
-                Skip bucket rules for this card
+                Skip list rules for this card
               </label>
             </div>
           </Field>
@@ -887,7 +887,7 @@ function ActivitySection({ card }: { card: Card }) {
   const [all, setAll] = useState(false);
   const items = [...card.activity].reverse();
   const shown = all ? items : items.slice(0, 6);
-  const listName = (id?: string | null) => (id && lists[id]?.title) || "a deleted bucket";
+  const listName = (id?: string | null) => (id && lists[id]?.title) || "a deleted list";
   const boardName = (id?: string | null) => (id && boards[id]?.title) || "a deleted board";
   const date = (v?: string | null) => (v ? prettyDate(v) : "none");
 
@@ -922,7 +922,7 @@ function ActivitySection({ card }: { card: Card }) {
               <span className="activity-dot" />
               <span className="grow">
                 {describe(a)}
-                {a.rule && <span className="muted"> · bucket rule in {listName(a.rule)}</span>}
+                {a.rule && <span className="muted"> · list rule in {listName(a.rule)}</span>}
               </span>
               <span className="muted small" title={format(a.at, "PPpp")}>
                 {timeAgo(a.at)}

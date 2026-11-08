@@ -16,7 +16,7 @@ export const FEATURES: { id: Feature; name: string; what: string }[] = [
   { id: "looks", name: "Board looks", what: "Backgrounds, card covers and what cards show" },
   { id: "time", name: "Time tracking", what: "Timers, focus countdowns, estimates and tracked time" },
   { id: "fields", name: "Custom fields", what: "Your own fields on cards: numbers, choices, links and more" },
-  { id: "automation", name: "Bucket automation", what: "Bucket rules and work-in-progress limits" },
+  { id: "automation", name: "List automation", what: "List rules and work-in-progress limits" },
   { id: "ai", name: "AI tools", what: "Work orders and handing cards to an AI chat of your choice" },
 ];
 
