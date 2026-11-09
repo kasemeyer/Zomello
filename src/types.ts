@@ -73,6 +73,8 @@ export interface Activity {
   to?: string | null;
   /** Made by a bucket rule: the bucket whose rule it was. */
   rule?: ID;
+  /** Display name of who did it. Absent on rule-made entries and history from before authorship. */
+  by?: string;
 }
 
 export interface TimeEntry {
@@ -88,6 +90,8 @@ export interface Comment {
   id: ID;
   text: string;
   createdAt: number;
+  /** Display name of who wrote it. Absent on notes from before authorship and on imports. */
+  author?: string;
 }
 
 export interface Card {

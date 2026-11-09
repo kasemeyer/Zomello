@@ -11,7 +11,7 @@ import { boardAsTemplate } from "./boardTemplates";
 import { broadcastData, isDeviceWindow, isExtraWindow, windowBoardId } from "./windows";
 import { sendDeviceChanges, setDeviceBase } from "./deviceWindow";
 import { isRemote } from "./remote";
-import { canEditBoard, isServer, mergeOps, pushChanges, rebaseSnapshot, setBase, type Ops } from "./server";
+import { canEditBoard, isServer, me, mergeOps, pushChanges, rebaseSnapshot, setBase, type Ops } from "./server";
 import {
   blockLoopReason, byOrder, emptyFilter, fromISO, inverseLink, isBlocked, isLate, nextRecurrenceDate, PALETTE, subtaskLoopReason, toISO, todayISO, uid,
 } from "./utils";
@@ -599,9 +599,15 @@ function nextOccurrence(c: Card): Card | null {
 const MAX_ACTIVITY = 200;
 const DAY_MS = 86_400_000;
 
+/** A fresh activity entry, stamped with who did it when someone is signed in. */
+function entry(kind: ActivityKind, extra: Partial<Activity> = {}): Activity {
+  return { at: Date.now(), kind, ...(me?.displayName ? { by: me.displayName } : {}), ...extra };
+}
+
 /** Activity entries describing what changed between two versions of a card. */
 function diffActivity(prev: Card, next: Card): Activity[] {
   const at = Date.now();
+  const by = me?.displayName;
   const out: Activity[] = [];
   if (prev.boardId !== next.boardId) out.push({ at, kind: "board", from: prev.boardId, to: next.boardId });
   else if (prev.listId !== next.listId) out.push({ at, kind: "moved", from: prev.listId, to: next.listId });
@@ -612,7 +618,7 @@ function diffActivity(prev: Card, next: Card): Activity[] {
   if (prev.title !== next.title) out.push({ at, kind: "renamed", from: prev.title, to: next.title });
   for (const a of next.assignees) if (!prev.assignees.includes(a)) out.push({ at, kind: "assigned", to: a });
   for (const a of prev.assignees) if (!next.assignees.includes(a)) out.push({ at, kind: "unassigned", from: a });
-  return out;
+  return by ? out.map((a) => ({ ...a, by })) : out;
 }
 
 /** Cards that were waiting on `id` and aren't blocked by anything any more. */
@@ -650,7 +656,7 @@ function patchCard(cards: Record<ID, Card>, id: ID, patch: Partial<Card>): Recor
   ruleTag = null;
   if (!prev) return cards;
   let next: Card = { ...prev, ...progressPatch(prev, patch), updatedAt: Date.now() };
-  const changes = diffActivity(prev, next).map((a) => (tag?.[a.kind] ? { ...a, rule: tag[a.kind] } : a));
+  const changes = diffActivity(prev, next).map((a) => (tag?.[a.kind] ? { ...a, by: undefined, rule: tag[a.kind] } : a));
   if (changes.length) next.activity = [...next.activity, ...changes].slice(-MAX_ACTIVITY);
   const out = { ...cards };
   // Linked checklist items keep a copy of the task's title — keep it current when the task is renamed.
@@ -1121,7 +1127,7 @@ export const useStore = create<State>((set, get) => {
       const fromT = template ? templateCard(template, list.boardId) : {};
       d = get().data;
       const card = newCard(list.boardId, listId, title.trim() || template?.title || title, Math.max(-1, ...siblings.map((c) => c.order)) + 1, {
-        activity: [{ at: Date.now(), kind: "created" }],
+        activity: [entry("created")],
         ...fromT,
         ...(list.autoProgress ? { progress: list.autoProgress } : {}),
         ...(list.newPriority ? { priority: list.newPriority } : {}),
@@ -1164,7 +1170,7 @@ export const useStore = create<State>((set, get) => {
         links: [],
         time: [],
         reminder: null,
-        activity: [{ at: Date.now(), kind: "created" }],
+        activity: [entry("created")],
       };
       mut((d) => ({ ...d, cards: { ...d.cards, [card.id]: card } }));
       return card.id;
@@ -1469,7 +1475,7 @@ export const useStore = create<State>((set, get) => {
           ...c,
           time: [...c.time, { id: uid(), start: now, end: null }],
           progress: starts ? "inProgress" : c.progress,
-          activity: starts ? [...c.activity, { at: now, kind: "progress", from: c.progress, to: "inProgress" }] : c.activity,
+          activity: starts ? [...c.activity, entry("progress", { at: now, from: c.progress, to: "inProgress" })] : c.activity,
         };
         return { ...d, cards };
       });

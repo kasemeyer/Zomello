@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import type { Activity, Attachment, Card, CardSection, FieldDef, ID, LinkType, Priority, Progress, Recurrence, RecurrenceFreq } from "../types";
 import { attachToCard, isLocalPath, storeLinkedFile } from "../attachments";
-import { canEditBoard } from "../server";
+import { canEditBoard, me } from "../server";
 import { useStore } from "../store";
 import {
   blockLoopReason, byOrder, subtaskLoopReason, describeRecurrence, fileSize, formatDuration, isImage, LINK_TYPES, parseDuration,
@@ -92,11 +92,16 @@ function CardDetail({ card, onClose }: { card: Card; onClose: () => void }) {
   );
   const set = (patch: Partial<Card>) => updateCard(card.id, patch);
   const [comment, setComment] = useState("");
+  const newNote = (text: string) => ({ id: uid(), text, createdAt: Date.now(), ...(me?.displayName ? { author: me.displayName } : {}) });
+  const saveNote = () => {
+    set({ comments: [newNote(comment.trim()), ...card.comments] });
+    setComment("");
+  };
   // A note that was typed but not saved yet is kept when the card closes or another card opens.
   useSaveOnUnmount(() => {
     const text = comment.trim();
     const cur = useStore.getState().data.cards[card.id];
-    if (text && cur) updateCard(card.id, { comments: [{ id: uid(), text, createdAt: Date.now() }, ...cur.comments] });
+    if (text && cur) updateCard(card.id, { comments: [newNote(text), ...cur.comments] });
   });
   const coverImg = card.coverImage ? card.attachments.find((a) => a.id === card.coverImage) : undefined;
 
@@ -389,19 +394,12 @@ function CardDetail({ card, onClose }: { card: Card; onClose: () => void }) {
               onChange={setComment}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && comment.trim()) {
-                  set({ comments: [{ id: uid(), text: comment.trim(), createdAt: Date.now() }, ...card.comments] });
-                  setComment("");
+                  saveNote();
                 }
               }}
             />
             {comment.trim() && (
-              <button
-                className="btn primary sm"
-                onClick={() => {
-                  set({ comments: [{ id: uid(), text: comment.trim(), createdAt: Date.now() }, ...card.comments] });
-                  setComment("");
-                }}
-              >
+              <button className="btn primary sm" onClick={saveNote}>
                 Save note
               </button>
             )}
@@ -409,7 +407,10 @@ function CardDetail({ card, onClose }: { card: Card; onClose: () => void }) {
               {card.comments.map((c) => (
                 <li key={c.id}>
                   <div className="row between">
-                    <span className="muted small">{timeAgo(c.createdAt)}</span>
+                    <span className="muted small">
+                      {c.author && <><b>{c.author}</b> · </>}
+                      {timeAgo(c.createdAt)}
+                    </span>
                     <button
                       className="icon-btn tiny"
                       onClick={() => set({ comments: card.comments.filter((x) => x.id !== c.id) })}
@@ -922,6 +923,7 @@ function ActivitySection({ card }: { card: Card }) {
               <span className="activity-dot" />
               <span className="grow">
                 {describe(a)}
+                {a.by && <span className="muted"> · {a.by}</span>}
                 {a.rule && <span className="muted"> · list rule in {listName(a.rule)}</span>}
               </span>
               <span className="muted small" title={format(a.at, "PPpp")}>
